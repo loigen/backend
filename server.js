@@ -21,7 +21,8 @@ app.use(express.urlencoded({ extended: false }));
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "http://backend-production-c8da.up.railway.app",
+  "https://backend-production-c8da.up.railway.app",
+  "https://frontend-loigens-projects.vercel.app/",
 ];
 
 app.use(
