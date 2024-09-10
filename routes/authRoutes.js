@@ -8,7 +8,6 @@ const {
   updatePassword,
 } = require("../controllers/authController");
 const authenticateToken = require("../middlewares/authenticateToken");
-const { post } = require("./scheduleRoutes");
 
 const router = express.Router();
 

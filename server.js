@@ -8,7 +8,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const scheduleRoutes = require("./routes/scheduleRoutes");
-const appointmentRoutes = require("./routes/appointmentRoutes");
+const appointmentRoutes = require("./routes/appointmentRoutes"); // Import appointment routes
 const blogRoutes = require("./routes/blogRoutes");
 const chatRoute = require("./routes/chatRoutes");
 const messageRoute = require("./routes/messageRoutes");
@@ -17,23 +17,12 @@ const socketServer = require("./socket/socket");
 
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
 const allowedOrigins = [
   "http://localhost:3000",
   "https://backend-production-c8da.up.railway.app",
-  "https://frontend-drab-eight-61.vercel.app",
+  "https://frontend-loigens-projects.vercel.app",
 ];
-
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-    methods: "GET,HEAD,OPTIONS,POST,PUT,DELETE,PATCH",
-    allowedHeaders:
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Origin",
-  })
-);
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
@@ -49,7 +38,6 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
-
   if (req.method === "OPTIONS") {
     res.sendStatus(200);
   } else {
@@ -81,6 +69,7 @@ app.use(
     },
   })
 );
+app.use(express.urlencoded({ extended: false }));
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
@@ -90,6 +79,7 @@ app.use("/blog", blogRoutes);
 app.use("/api/chats", chatRoute);
 app.use("/api/messages", messageRoute);
 app.use("/Feedback", feedbackRoute);
+
 app.set("view engine", "ejs");
 
 const server = app.listen(PORT, () => {
@@ -97,8 +87,3 @@ const server = app.listen(PORT, () => {
 });
 
 socketServer(server);
-
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something broke!");
-});

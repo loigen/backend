@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const blogController = require("../controllers/blogController");
 const authenticateToken = require("../middlewares/authenticateToken");
-const { put } = require("./scheduleRoutes");
+const { put } = require("./authRoutes");
 
 router.post("/create", blogController.createBlog);
 
@@ -24,11 +24,9 @@ router.get("/all", blogController.getAllBlogs);
 router.get("/allBlogs", blogController.getAllBlogs);
 
 router.get("/drafts", blogController.getAllDrafts);
-
 router.put("/:draftId/update", blogController.updateDraft);
 
 router.put("/:draftId/publish", blogController.publishDraft);
 
 router.put("/:blogId/edit", blogController.editPublishedBlog);
-
 module.exports = router;
