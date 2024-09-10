@@ -16,61 +16,67 @@ const feedbackRoute = require("./routes/FeedbackRoutes");
 const socketServer = require("./socket/socket");
 
 const app = express();
-app.use(express.json());
 
+// CORS configuration
 const allowedOrigins = [
   "http://localhost:3000",
   "https://backend-production-c8da.up.railway.app",
   "https://frontend-loigens-projects.vercel.app",
 ];
 
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Origin",
+    "X-Requested-With",
+    "Content-Type",
+    "Accept",
+    "Authorization",
+  ],
+};
+
+app.use(cors(corsOptions));
+
+// Middleware to parse JSON and URL-encoded data
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// Logging middleware for debugging
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET,HEAD,OPTIONS,POST,PUT,DELETE,PATCH"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  if (req.method === "OPTIONS") {
-    res.sendStatus(200);
-  } else {
-    next();
-  }
+  console.log("Request Method:", req.method);
+  console.log("Request URL:", req.originalUrl);
+  console.log("Request Headers:", req.headers);
+  next();
 });
 
-const PORT = process.env.PORT || 5000;
-const JWT_SECRET = process.env.JWT_SECRET;
-
+// Connect to the database
 connectDB();
 
+// Session store setup
 const sessionStore = MongoStore.create({
   mongoUrl: process.env.DB_URI,
   collectionName: "sessions",
-  ttl: 7 * 24 * 60 * 60,
+  ttl: 7 * 24 * 60 * 60, // 1 week
 });
 
+// Session configuration
 app.use(
   session({
-    secret: JWT_SECRET,
+    secret: process.env.JWT_SECRET,
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
+      secure: process.env.NODE_ENV === "production", // Enforce HTTPS
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
   })
 );
-app.use(express.urlencoded({ extended: false }));
 
+// Route handlers
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/schedules", scheduleRoutes);
@@ -80,10 +86,20 @@ app.use("/api/chats", chatRoute);
 app.use("/api/messages", messageRoute);
 app.use("/Feedback", feedbackRoute);
 
+// Set view engine
 app.set("view engine", "ejs");
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Error:", err.stack);
+  res.status(500).send("Something broke!");
+});
+
+// Start the server
+const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
+// Initialize socket server
 socketServer(server);
