@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 const allowedOrigins = [
   "http://localhost:3000",
   "https://backend-production-c8da.up.railway.app",
-  "https://frontend-loigens-projects.vercel.app/",
+  "https://frontend-loigens-projects.vercel.app",
 ];
 
 app.use(
