@@ -22,6 +22,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://backend-production-c8da.up.railway.app",
   "https://frontend-loigens-projects.vercel.app",
+  "https://frontend-eight-alpha-64.vercel.app/",
 ];
 
 const corsOptions = {
