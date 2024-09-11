@@ -11,7 +11,7 @@ router.get("/profile", authenticateToken, userController.getProfile);
 
 router.put(
   "/updateprofile",
-  [authenticateToken, uploadProfilePicture.single("profile_picture")],
+  [uploadProfilePicture.single("profile_picture")],
   userController.updateProfile
 );
 
