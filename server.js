@@ -28,7 +28,7 @@ const allowedOrigins = [
 const corsOptions = {
   origin: allowedOrigins,
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: [
     "Origin",
     "X-Requested-With",
@@ -39,8 +39,9 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
-// Middleware to parse JSON and URL-encoded data
+//authRoutes. Middleware to parse JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
