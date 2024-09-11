@@ -2,8 +2,10 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const authenticateToken = (req, res, next) => {
-  const token = req.session.token;
-  console.log("Session token:", token);
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  console.log("Token:", token);
 
   if (!token) {
     return res.sendStatus(401);
