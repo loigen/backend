@@ -144,7 +144,7 @@ exports.forgotpassword = async (req, res) => {
       expiresIn: "5m",
     });
 
-    const link = `http://localhost:5000/auth/reset-password/${oldUser._id}/${token}`;
+    const link = `https://backend-production-c8da.up.railway.app/auth/reset-password/${oldUser._id}/${token}`;
     return res.json({ status: "success", link });
   } catch (error) {
     console.error(error);

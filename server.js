@@ -8,7 +8,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const scheduleRoutes = require("./routes/scheduleRoutes");
-const appointmentRoutes = require("./routes/appointmentRoutes"); // Import appointment routes
+const appointmentRoutes = require("./routes/appointmentRoutes");
 const blogRoutes = require("./routes/blogRoutes");
 const chatRoute = require("./routes/chatRoutes");
 const messageRoute = require("./routes/messageRoutes");
@@ -17,7 +17,6 @@ const socketServer = require("./socket/socket");
 
 const app = express();
 
-// CORS configuration
 const allowedOrigins = [
   "http://localhost:3000",
   "https://backend-production-c8da.up.railway.app",
@@ -41,11 +40,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
-//authRoutes. Middleware to parse JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Logging middleware for debugging
 app.use((req, res, next) => {
   console.log("Request Method:", req.method);
   console.log("Request URL:", req.originalUrl);
@@ -53,17 +50,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Connect to the database
 connectDB();
 
-// Session store setup
 const sessionStore = MongoStore.create({
   mongoUrl: process.env.DB_URI,
   collectionName: "sessions",
-  ttl: 7 * 24 * 60 * 60, // 1 week
+  ttl: 7 * 24 * 60 * 60,
 });
 
-// Session configuration
 app.use(
   session({
     secret: process.env.JWT_SECRET,
@@ -71,14 +65,13 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
-      secure: process.env.NODE_ENV === "production", // Enforce HTTPS
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
   })
 );
 
-// Route handlers
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/schedules", scheduleRoutes);
@@ -88,20 +81,16 @@ app.use("/api/chats", chatRoute);
 app.use("/api/messages", messageRoute);
 app.use("/Feedback", feedbackRoute);
 
-// Set view engine
 app.set("view engine", "ejs");
 
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error("Error:", err.stack);
   res.status(500).send("Something broke!");
 });
 
-// Start the server
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-// Initialize socket server
 socketServer(server);
