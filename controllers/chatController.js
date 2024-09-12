@@ -1,4 +1,6 @@
+const { json } = require("express");
 const chatModel = require("../schemas/chatModel");
+const messageModel = require("../schemas/messageModel");
 
 const createChat = async (req, res) => {
   const { firstId, secondId } = req.body;
@@ -49,5 +51,24 @@ const findChat = async (req, res) => {
     res.status(500).json(error);
   }
 };
+const deleteChat = async (req, res) => {
+  const { chatId } = req.params;
 
-module.exports = { createChat, findUserChats, findChat };
+  try {
+    await messageModel.deleteMany({ chatId });
+
+    const deletedChat = await chatModel.findByIdAndDelete(chatId);
+
+    if (!deletedChat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+
+    res.status(200).json({ message: "Chat and messages deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while deleting the chat", error });
+  }
+};
+module.exports = { createChat, findUserChats, findChat, deleteChat };
