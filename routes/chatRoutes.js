@@ -4,7 +4,6 @@ const {
   findUserChats,
   findChat,
   deleteChat,
-  deleteChat,
 } = require("../controllers/chatController");
 
 const router = express.Router();
