@@ -5,7 +5,10 @@ let onlineUser = [];
 const socketServer = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "*",
+      origin:
+        process.env.NODE_ENV === "production"
+          ? "https://frontend-loigens-projects.vercel.app"
+          : "*",
       methods: ["GET", "POST"],
       credentials: true,
     },
