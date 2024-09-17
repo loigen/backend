@@ -1,5 +1,7 @@
 const { json } = require("express");
 const Schedule = require("../schemas/Schedule");
+const moment = require("moment");
+const { countFreeSlots } = require("./scheduleController");
 
 exports.getFreeTimeSlots = async (req, res) => {
   try {
@@ -152,7 +154,14 @@ exports.acceptSlot = async (req, res) => {
 
 exports.countFreeSlots = async (req, res) => {
   try {
-    const freeSlotsCount = await Schedule.countDocuments({ status: "free" });
+    const startOfWeek = moment().startOf("week").toDate();
+    const endOfWeek = moment().endOf("week").toDate();
+
+    const freeSlotsCount = await Schedule.countDocuments({
+      status: "free",
+      date: { $gte: startOfWeek, $lte: endOfWeek },
+    });
+
     res.json({ count: freeSlotsCount });
   } catch (error) {
     console.error("Error counting free slots:", error);
@@ -160,14 +169,18 @@ exports.countFreeSlots = async (req, res) => {
   }
 };
 
-exports.countPendingSlots = async (req, res) => {
+exports.countWeeklySlots = async (req, res) => {
   try {
-    const pendingSlotsCount = await Schedule.countDocuments({
-      status: "pending",
+    const startOfWeek = moment().startOf("week").toDate();
+    const endOfWeek = moment().endOf("week").toDate();
+
+    const weeklySlotsCount = await Schedule.countDocuments({
+      date: { $gte: startOfWeek, $lte: endOfWeek },
     });
-    res.json({ count: pendingSlotsCount });
+
+    res.json({ count: weeklySlotsCount });
   } catch (error) {
-    console.error("Error counting pending slots:", error);
+    console.error("Error counting weekly slots:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
