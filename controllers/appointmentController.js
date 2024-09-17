@@ -7,6 +7,7 @@ const {
 } = require("../middlewares/multer");
 const mongoose = require("mongoose");
 const { json } = require("express");
+const { save } = require("node-cron/src/storage");
 
 exports.createAppointment = [
   uploadReceipt.single("receipt"),
@@ -740,3 +741,34 @@ exports.updateAppointmentWithBankAccount = [
     }
   },
 ];
+
+// controllers/appointmentController.js
+
+exports.completeAppointment = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const appointment = await Appointment.findById(id);
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found." });
+    }
+
+    if (appointment.status !== "accepted") {
+      return res.status(400).json({
+        message: "Only accepted appointments can be marked as completed.",
+      });
+    }
+
+    appointment.status = "completed";
+
+    await appointment.save();
+
+    res
+      .status(200)
+      .json({ message: "Appointment marked as completed", appointment });
+  } catch (error) {
+    console.error("Error updating appointment to completed:", error);
+    res.status(500).json({ message: "Failed to update appointment status." });
+  }
+};

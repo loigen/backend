@@ -12,7 +12,7 @@ router.delete("/slots/:id", scheduleController.deleteFreeTimeSlot);
 
 router.patch("/slots/:id", scheduleController.updateSlotStatus);
 
-router.get("/slots/pending", scheduleController.getPendingSlots); // Add this line
+router.get("/slots/pending", scheduleController.getPendingSlots);
 
 router.patch("accept-slot/:id", scheduleController.acceptSlot);
 

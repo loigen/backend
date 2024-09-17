@@ -3,6 +3,7 @@ const router = express.Router();
 const appointmentController = require("../controllers/appointmentController"); // Adjust the path as needed
 
 const { uploadQRCode } = require("../middlewares/multer");
+const { patch } = require("./chatRoutes");
 
 // Create a new appointment
 router.post("/appointments", appointmentController.createAppointment);
@@ -74,5 +75,7 @@ router.post(
 
 //for QR
 router.post("/refund", appointmentController.returnRefund);
+
+router.patch("/complete/:id", appointmentController.completeAppointment);
 
 module.exports = router;
