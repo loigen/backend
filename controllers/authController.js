@@ -98,33 +98,25 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Check if email or password is missing
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required" });
     }
 
-    // Find the user by email
     const user = await User.findOne({ email });
     if (!user) {
-      // Specific message for non-existing users
       return res.status(400).json({ error: "User not found" });
     }
 
-    // Compare the provided password with the hashed password stored in the database
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      // Specific message for incorrect password
       return res.status(400).json({ error: "Incorrect password" });
     }
 
-    // Sign the JWT token with the user ID and an expiration of 1 hour
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
-    req.session.token = token; // Optionally store the token in the session
+    req.session.token = token;
 
-    // Send the token and user role back to the client
     res.status(200).json({ token, role: user.role });
   } catch (error) {
-    // Log any unexpected server errors
     console.error("Login error:", error);
     res.status(500).json({ error: "Server error" });
   }

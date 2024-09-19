@@ -2,9 +2,6 @@ const express = require("express");
 const router = express.Router();
 const appointmentController = require("../controllers/appointmentController"); // Adjust the path as needed
 
-const { uploadQRCode } = require("../middlewares/multer");
-const { patch } = require("./chatRoutes");
-
 // Create a new appointment
 router.post("/appointments", appointmentController.createAppointment);
 
