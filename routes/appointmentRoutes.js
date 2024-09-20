@@ -26,6 +26,8 @@ router.patch("/accept/:id", appointmentController.acceptAppointment);
 // Reject an appointment
 router.patch("/reject/:id", appointmentController.rejectAppointment);
 
+router.patch("/cancel/:id", appointmentController.cancelAppointments);
+
 // Fetch pending appointments
 router.get("/pending", appointmentController.getPendingAppointments);
 

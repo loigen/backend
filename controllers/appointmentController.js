@@ -191,6 +191,22 @@ exports.rejectAppointment = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+exports.cancelAppointments = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const appointment = await Appointment.findById(id);
+    if (!appointment)
+      return res.status(404).json({ message: "Appointment not found" });
+
+    appointment.status = "canceled";
+    await appointment.save();
+
+    res.status(200).json({ message: "Appointment canceled", appointment });
+  } catch (error) {
+    console.error("Error canceling appointment:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 exports.acceptAppointment = async (req, res) => {
   try {
     const { id } = req.params;
