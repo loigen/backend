@@ -8,14 +8,12 @@ const userSchema = new mongoose.Schema({
   EducationBackground: { type: String, required: true },
   Religion: { type: String, required: true },
   Age: { type: Number, required: true },
-
   email: {
     type: String,
     required: true,
     unique: true,
   },
   sex: { type: String, required: true, enum: ["Male", "Female"] },
-
   status: { type: String, default: "active" },
   password: { type: String, required: true },
   role: { type: String, enum: ["user", "admin"], default: "user" },
