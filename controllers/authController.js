@@ -2,6 +2,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../schemas/User");
 const validator = require("validator");
+const { json } = require("express");
+const { save } = require("node-cron/src/storage");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -13,7 +15,11 @@ const validateSignupData = (
   password,
   repeatPassword,
   birthdate,
-  sex
+  sex,
+  Profession,
+  EducationBackground,
+  Religion,
+  Age
 ) => {
   if (
     !firstname ||
@@ -22,7 +28,11 @@ const validateSignupData = (
     !password ||
     !repeatPassword ||
     !birthdate ||
-    !sex
+    !sex ||
+    !Profession ||
+    !EducationBackground ||
+    !Religion ||
+    !Age
   ) {
     return "All fields are required";
   }
@@ -38,6 +48,9 @@ const validateSignupData = (
   if (!["Male", "Female"].includes(sex)) {
     return "Sex must be either 'Male' or 'Female'";
   }
+  if (!Number.isInteger(Age) || Age <= 0) {
+    return "Invalid age";
+  }
   return null;
 };
 
@@ -45,6 +58,11 @@ exports.signup = async (req, res) => {
   const {
     firstname,
     lastname,
+    middleName,
+    Profession,
+    EducationBackground,
+    Religion,
+    Age,
     email,
     password,
     repeatPassword,
@@ -59,7 +77,11 @@ exports.signup = async (req, res) => {
     password,
     repeatPassword,
     birthdate,
-    sex
+    sex,
+    Profession,
+    EducationBackground,
+    Religion,
+    Age
   );
 
   if (errorMessage) {
@@ -78,6 +100,11 @@ exports.signup = async (req, res) => {
     const user = new User({
       firstname,
       lastname,
+      middleName: middleName || "", // Optional field
+      Profession,
+      EducationBackground,
+      Religion,
+      Age,
       email,
       password: hashedPassword,
       role,
@@ -145,7 +172,7 @@ exports.forgotpassword = async (req, res) => {
       expiresIn: "5m",
     });
 
-    const link = `https://backend-production-c8da.up.railway.app/auth/reset-password/${oldUser._id}/${token}`;
+    const link = `https://bacUser.kend-production-c8da.up.railway.app/auth/reset-password/${oldUser._id}/${token}`;
     return res.json({ status: "success", link });
   } catch (error) {
     console.error(error);

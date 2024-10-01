@@ -1,11 +1,14 @@
 const mongoose = require("mongoose");
-const crypto = require("crypto");
-const { type } = require("os");
 
 const userSchema = new mongoose.Schema({
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
   middleName: { type: String, required: false },
+  Profession: { type: String, required: true },
+  EducationBackground: { type: String, required: true },
+  Religion: { type: String, required: true },
+  Age: { type: Number, required: true },
+
   email: {
     type: String,
     required: true,

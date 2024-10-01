@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const scheduleController = require("../controllers/scheduleController");
+const { put } = require("./scheduleRoutes");
 
 router.post("/slots", scheduleController.addFreeTimeSlot);
 
@@ -20,4 +21,7 @@ router.get("/count-free", scheduleController.countFreeSlots);
 router.get("/count-pending", scheduleController.countWeeklySlots);
 
 router.patch("/updateByDateTime", scheduleController.updateSlotsByDateTime);
+
+router.put("/slots/:id/reschedule", scheduleController.rescheduleSlot);
+
 module.exports = router;

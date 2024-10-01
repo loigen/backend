@@ -204,3 +204,42 @@ exports.updateSlotsByDateTime = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+exports.rescheduleSlot = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newDate, newTime } = req.body;
+
+    if (!newDate || !newTime) {
+      return res
+        .status(400)
+        .json({ message: "New date and time are required" });
+    }
+
+    const existingSlot = await Schedule.findOne({
+      date: new Date(newDate),
+      time: newTime,
+      status: "free",
+    });
+
+    if (existingSlot) {
+      return res
+        .status(400)
+        .json({ message: "Time slot already exists at the new date and time" });
+    }
+
+    const rescheduledSlot = await Schedule.findByIdAndUpdate(
+      id,
+      { date: new Date(newDate), time: newTime },
+      { new: true }
+    );
+
+    if (!rescheduledSlot) {
+      return res.status(404).json({ message: "Slot not found" });
+    }
+
+    res.json({ message: "Time slot rescheduled", slot: rescheduledSlot });
+  } catch (error) {
+    console.error("Error rescheduling slot:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
