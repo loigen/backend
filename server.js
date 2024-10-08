@@ -19,6 +19,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:3000",
+  "http://localhost:3001",
   "https://backend-production-c8da.up.railway.app",
   "https://frontend-loigens-projects.vercel.app",
   "https://frontend-eight-alpha-64.vercel.app/",
@@ -83,7 +84,7 @@ app.use("/Feedback", feedbackRoute);
 
 app.set("view engine", "ejs");
 
-app.use((err, req, res, next) => {
+app.use((err, res) => {
   console.error("Error:", err.stack);
   res.status(500).send("Something broke!");
 });
