@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
   Profession: { type: String, required: true },
   EducationBackground: { type: String, required: true },
   Religion: { type: String, required: true },
-  Age: { type: Number, required: true },
   email: {
     type: String,
     required: true,

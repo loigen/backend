@@ -18,8 +18,7 @@ const validateSignupData = (
   sex,
   Profession,
   EducationBackground,
-  Religion,
-  Age
+  Religion
 ) => {
   if (
     !firstname ||
@@ -31,8 +30,7 @@ const validateSignupData = (
     !sex ||
     !Profession ||
     !EducationBackground ||
-    !Religion ||
-    !Age
+    !Religion
   ) {
     return "All fields are required";
   }
@@ -48,9 +46,7 @@ const validateSignupData = (
   if (!["Male", "Female"].includes(sex)) {
     return "Sex must be either 'Male' or 'Female'";
   }
-  if (!Number.isInteger(Age) || Age <= 0) {
-    return "Invalid age";
-  }
+
   return null;
 };
 
@@ -62,7 +58,6 @@ exports.signup = async (req, res) => {
     Profession,
     EducationBackground,
     Religion,
-    Age,
     email,
     password,
     repeatPassword,
@@ -80,8 +75,7 @@ exports.signup = async (req, res) => {
     sex,
     Profession,
     EducationBackground,
-    Religion,
-    Age
+    Religion
   );
 
   if (errorMessage) {
@@ -104,7 +98,6 @@ exports.signup = async (req, res) => {
       Profession,
       EducationBackground,
       Religion,
-      Age,
       email,
       password: hashedPassword,
       role,
