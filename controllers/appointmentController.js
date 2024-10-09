@@ -7,7 +7,96 @@ const {
 } = require("../middlewares/multer");
 const mongoose = require("mongoose");
 const { json } = require("express");
-const { save } = require("node-cron/src/storage");
+
+exports.rescheduleAppointment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newDate, newTime } = req.body;
+
+    if (!newDate || !newTime) {
+      return res.status(400).json({
+        message:
+          "New date and time are required to reschedule the appointment.",
+      });
+    }
+
+    const appointment = await Appointment.findById(id);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found." });
+    }
+
+    appointment.date = newDate;
+    appointment.time = newTime;
+    appointment.status = "rescheduled";
+
+    await appointment.save();
+
+    res
+      .status(200)
+      .json({ message: "Appointment rescheduled successfully", appointment });
+  } catch (error) {
+    console.error("Error rescheduling appointment:", error);
+    res.status(500).json({ message: "Failed to reschedule appointment." });
+  }
+};
+
+exports.reqRescheduleAppointment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newDate, newTime } = req.body;
+
+    if (!newDate || !newTime) {
+      return res.status(400).json({
+        message:
+          "New date and time are required to request reschedule the appointment.",
+      });
+    }
+
+    const appointment = await Appointment.findById(id);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found." });
+    }
+
+    appointment.date = newDate;
+    appointment.time = newTime;
+    appointment.status = "ReqRescheduled";
+
+    await appointment.save();
+
+    res
+      .status(200)
+      .json({ message: "Appointment rescheduled successfully", appointment });
+  } catch (error) {
+    console.error("Error rescheduling appointment:", error);
+    res.status(500).json({ message: "Failed to reschedule appointment." });
+  }
+};
+
+exports.updateAppointmentStatusToRescheduled = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the appointment by ID
+    const appointment = await Appointment.findById(id);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found." });
+    }
+
+    // Update the appointment status to 'rescheduled'
+    appointment.status = "rescheduled";
+
+    // Save the changes
+    await appointment.save();
+
+    res.status(200).json({
+      message: "Appointment status updated to rescheduled",
+      appointment,
+    });
+  } catch (error) {
+    console.error("Error updating appointment status:", error);
+    res.status(500).json({ message: "Failed to update appointment status." });
+  }
+};
 
 exports.createAppointment = [
   uploadReceipt.single("receipt"),

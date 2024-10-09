@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const appointmentController = require("../controllers/appointmentController"); // Adjust the path as needed
+const { put, patch, get } = require("./appointmentRoutes");
 
 // Create a new appointment
 router.post("/appointments", appointmentController.createAppointment);
@@ -76,5 +77,16 @@ router.post(
 router.post("/refund", appointmentController.returnRefund);
 
 router.patch("/complete/:id", appointmentController.completeAppointment);
+
+router.put("/:id/reschedule", appointmentController.rescheduleAppointment);
+
+router.put("/:id/reqReschedule", appointmentController.rescheduleAppointment);
+
+router.patch(
+  "/:id/update-status-rescheduled",
+  appointmentController.updateAppointmentStatusToRescheduled
+);
+
+// Fetch appointments with status 'rescheduled'
 
 module.exports = router;

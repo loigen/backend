@@ -25,6 +25,8 @@ const appointmentSchema = new Schema(
         "completed",
         "requested",
         "refunded",
+        "rescheduled",
+        "ReqRescheduled",
       ],
       default: "pending",
       required: true,
