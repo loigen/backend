@@ -244,7 +244,14 @@ exports.updatePassword = async (req, res) => {
   try {
     const oldUser = await User.findOne({ _id: id });
     if (!oldUser) {
-      return res.status(404).json({ status: "User not found" });
+      return res.status(404).send(`
+        <html>
+          <body>
+            <h1>User not found</h1>
+            <a href="https://frontend-loigens-projects.vercel.app">Return to homepage</a>
+          </body>
+        </html>
+      `);
     }
 
     const secret = JWT_SECRET + oldUser.password;
@@ -256,11 +263,26 @@ exports.updatePassword = async (req, res) => {
       { $set: { password: encryptedPassword } }
     );
 
-    return res.json({ status: "Password Updated" });
+    return res.send(`
+      <html>
+        <body>
+          <h1>Password Updated Successfully</h1>
+          <a href="https://frontend-loigens-projects.vercel.app">Login Here</a>
+        </body>
+      </html>
+    `);
   } catch (error) {
-    return res.status(400).json({ status: "Something went wrong" });
+    return res.status(400).send(`
+      <html>
+        <body>
+          <h1>Something went wrong</h1>
+          <a href="https://frontend-loigens-projects.vercel.app">Return to homepage</a>
+        </body>
+      </html>
+    `);
   }
 };
+
 exports.verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
 
