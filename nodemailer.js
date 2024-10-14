@@ -1,13 +1,14 @@
+// nodemailer.js
+
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 const { getRefreshToken } = require("./fetchRefresh");
 dotenv.config();
 
-// Step 3: Configure the transporter
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REFRESH_TOKEN = process.env.GMAIL_REFRESH_TOKEN;
-const REDIRECT_URI = "https://developers.google.com/oauthplayground"; //DONT EDIT THIS
+const REDIRECT_URI = "https://developers.google.com/oauthplayground";
 const MY_EMAIL = process.env.TEST_EMAIL;
 
 const sendEmailOTP = async (to, otp) => {
@@ -49,4 +50,43 @@ const sendEmailOTP = async (to, otp) => {
   });
 };
 
-module.exports = { sendEmailOTP };
+const sendAppointmentReminder = async (to, firstname, date, time) => {
+  const response = await getRefreshToken(
+    REFRESH_TOKEN,
+    CLIENT_ID,
+    CLIENT_SECRET
+  );
+  const ACCESS_TOKEN = response.access_token;
+
+  const transport = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      type: "OAuth2",
+      user: MY_EMAIL,
+      clientId: CLIENT_ID,
+      clientSecret: CLIENT_SECRET,
+      refreshToken: REFRESH_TOKEN,
+      accessToken: ACCESS_TOKEN,
+    },
+    tls: {
+      rejectUnauthorized: true,
+    },
+  });
+
+  const from = MY_EMAIL;
+  const subject = "Appointment Reminder";
+  const html = `
+      <p>Hi ${firstname},</p>
+      <p>This is a reminder that your appointment is scheduled for <strong>${date}</strong> at <strong>${time}</strong>.</p>
+      <p>Thank you</p>
+      `;
+
+  return new Promise((resolve, reject) => {
+    transport.sendMail({ from, subject, to, html }, (err, info) => {
+      if (err) reject(err);
+      resolve(info);
+    });
+  });
+};
+
+module.exports = { sendEmailOTP, sendAppointmentReminder };

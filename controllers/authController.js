@@ -2,11 +2,14 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../schemas/User");
 const validator = require("validator");
-const { json } = require("express");
-const { save } = require("node-cron/src/storage");
+const crypto = require("crypto");
+
+const { sendEmailOTP } = require("../nodemailer");
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
+function generateOTP() {
+  return crypto.randomInt(100000, 999999).toString();
+}
 // Signup Validator
 const validateSignupData = (
   firstname,
@@ -113,6 +116,40 @@ exports.signup = async (req, res) => {
   }
 };
 
+exports.Adminlogin = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User doesn't exist" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Wrong password" });
+    }
+
+    // Generate and set OTP for admin verification
+    const otp = generateOTP();
+    user.otp = otp;
+    user.otpExpiration = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
+    await user.save();
+
+    // Send OTP to admin email
+    await sendEmailOTP(user.email, otp);
+
+    res.status(200).json({ message: "OTP sent to your email" });
+  } catch (error) {
+    console.error("Admin login error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 // Login
 exports.login = async (req, res) => {
   const { email, password } = req.body;
@@ -216,5 +253,30 @@ exports.updatePassword = async (req, res) => {
     return res.json({ status: "Password Updated" });
   } catch (error) {
     return res.status(400).json({ status: "Something went wrong" });
+  }
+};
+exports.verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Check OTP and expiration
+    if (user.otp !== otp || user.otpExpiration < new Date()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    // Clear OTP and expiration after successful verification
+    await user.clearOtp();
+
+    // Generate JWT token
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
+    req.session.token = token; // Store token in session
+
+    // Return token in the response for frontend use
+    res.json({ message: "OTP verified successfully", token }); // Include token in response
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
   }
 };

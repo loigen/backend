@@ -6,6 +6,8 @@ const {
   forgotpassword,
   resetpassword,
   updatePassword,
+  Adminlogin,
+  verifyOtp,
 } = require("../controllers/authController");
 const authenticateToken = require("../middlewares/authenticateToken");
 
@@ -22,5 +24,9 @@ router.post("/forgot-password", forgotpassword);
 router.get("/reset-password/:id/:token", resetpassword);
 
 router.post("/reset-password/:id/:token", updatePassword);
+
+router.post("/AdminLogin", Adminlogin);
+
+router.post("/verify-otp", verifyOtp);
 
 module.exports = router;
