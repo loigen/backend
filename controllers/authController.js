@@ -4,6 +4,7 @@ const User = require("../schemas/User");
 const validator = require("validator");
 const { json } = require("express");
 const { save } = require("node-cron/src/storage");
+const { sendEmailOTP } = require("../nodemailer");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -114,8 +115,9 @@ exports.signup = async (req, res) => {
 };
 
 // Login
+
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, otp } = req.body; // Include OTP in the request
 
   try {
     if (!email || !password) {
@@ -132,7 +134,35 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: "Wrong password" });
     }
 
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
+    if (user.role === "admin") {
+      if (!otp) {
+        const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        await sendEmailOTP(user.email, newOtp);
+        user.otp = newOtp;
+        user.otpExpiration = Date.now() + 300000;
+        await user.save();
+
+        return res.status(200).json({
+          message: "OTP has been sent to your email.",
+        });
+      }
+
+      if (
+        user.otp !== otp ||
+        !user.otpExpiration ||
+        user.otpExpiration < Date.now()
+      ) {
+        return res.status(400).json({ error: "Invalid or expired OTP." });
+      }
+
+      user.otp = undefined;
+      user.otpExpiration = undefined;
+      await user.save();
+    }
+
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
     req.session.token = token;
 
     res.status(200).json({ token, role: user.role });

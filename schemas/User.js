@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { save } = require("node-cron/src/storage");
 
 const userSchema = new mongoose.Schema({
   firstname: { type: String, required: true },
@@ -19,6 +20,8 @@ const userSchema = new mongoose.Schema({
   profilePicture: { type: String, default: "" },
   bio: { type: String, default: "" },
   birthdate: { type: Date, required: true },
+  otp: { type: String, default: null },
+  otpExpiration: { type: Date, default: null },
 });
 
 userSchema.methods.getGravatarUrl = function () {
@@ -31,7 +34,11 @@ userSchema.pre("save", function (next) {
   }
   next();
 });
-
+userSchema.methods.clearOtp = function () {
+  this.otp = null;
+  this.otpExpiration = null;
+  return this.save();
+};
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
