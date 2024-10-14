@@ -411,7 +411,7 @@ exports.getAppointmentData = async (req, res) => {
     const appointments = await Appointment.find()
       .populate("userId", "-password -role -otp -status") // Exclude specified fields
       .select(
-        "date qrCode refundReceipt meetLink appointmentType time appointmentType status userId"
+        "date qrCode refundReceipt meetLink appointmentType time appointmentType status userId note"
       );
 
     const appointmentData = appointments.map((appointment) => ({
@@ -437,6 +437,7 @@ exports.getAppointmentData = async (req, res) => {
       meetLink: appointment.meetLink,
       qrCode: appointment.qrCode,
       refundReceipt: appointment.refundReceipt,
+      note: appointment.note,
     }));
 
     res.status(200).json(appointmentData);
@@ -445,6 +446,7 @@ exports.getAppointmentData = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch appointment data." });
   }
 };
+
 exports.getCurrentWeekAppointments = async (req, res) => {
   try {
     const today = new Date();
@@ -890,5 +892,30 @@ exports.completeAppointment = async (req, res) => {
   } catch (error) {
     console.error("Error updating appointment to completed:", error);
     res.status(500).json({ message: "Failed to update appointment status." });
+  }
+};
+
+exports.addNoteToAppointment = async (req, res) => {
+  const { appointmentId } = req.params;
+  const { note } = req.body;
+
+  try {
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      appointmentId,
+      { note },
+      { new: true }
+    );
+
+    if (!updatedAppointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    return res.status(200).json({
+      message: "Note added successfully",
+      appointment: updatedAppointment,
+    });
+  } catch (error) {
+    console.error("Error adding note:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };

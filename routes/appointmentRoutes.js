@@ -87,6 +87,6 @@ router.patch(
   appointmentController.updateAppointmentStatusToRescheduled
 );
 
-// Fetch appointments with status 'rescheduled'
+router.put("/:appointmentId/note", appointmentController.addNoteToAppointment);
 
 module.exports = router;
