@@ -77,6 +77,7 @@ const appointmentSchema = new Schema(
       type: String,
       required: false,
     },
+    note: { type: String, default: "" },
   },
   {
     timestamps: true,

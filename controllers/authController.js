@@ -4,7 +4,7 @@ const User = require("../schemas/User");
 const validator = require("validator");
 const crypto = require("crypto");
 
-const { sendEmailOTP, sendPasswordResetEmail } = require("../nodemailer");
+const { sendEmailOTP } = require("../nodemailer");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 function generateOTP() {
@@ -202,14 +202,8 @@ exports.forgotpassword = async (req, res) => {
       expiresIn: "5m",
     });
 
-    const link = `https://backend-production-c8da.up.railway.app/auth/reset-password/${oldUser._id}/${token}`;
-
-    await sendPasswordResetEmail(email, oldUser.email, link);
-
-    return res.json({
-      status: "success",
-      message: "Password reset link sent to your email",
-    });
+    const link = `https://bacUser.kend-production-c8da.up.railway.app/auth/reset-password/${oldUser._id}/${token}`;
+    return res.json({ status: "success", link });
   } catch (error) {
     console.error(error);
     return res
@@ -244,14 +238,7 @@ exports.updatePassword = async (req, res) => {
   try {
     const oldUser = await User.findOne({ _id: id });
     if (!oldUser) {
-      return res.status(404).send(`
-        <html>
-          <body>
-            <h1>User not found</h1>
-            <a href="https://frontend-loigens-projects.vercel.app">Return to homepage</a>
-          </body>
-        </html>
-      `);
+      return res.status(404).json({ status: "User not found" });
     }
 
     const secret = JWT_SECRET + oldUser.password;
@@ -263,26 +250,11 @@ exports.updatePassword = async (req, res) => {
       { $set: { password: encryptedPassword } }
     );
 
-    return res.send(`
-      <html>
-        <body>
-          <h1>Password Updated Successfully</h1>
-          <a href="https://frontend-loigens-projects.vercel.app">Login Here</a>
-        </body>
-      </html>
-    `);
+    return res.json({ status: "Password Updated" });
   } catch (error) {
-    return res.status(400).send(`
-      <html>
-        <body>
-          <h1>Something went wrong</h1>
-          <a href="https://frontend-loigens-projects.vercel.app">Return to homepage</a>
-        </body>
-      </html>
-    `);
+    return res.status(400).json({ status: "Something went wrong" });
   }
 };
-
 exports.verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
 
