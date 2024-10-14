@@ -4,7 +4,7 @@ const User = require("../schemas/User");
 const validator = require("validator");
 const crypto = require("crypto");
 
-const { sendEmailOTP } = require("../nodemailer");
+const { sendEmailOTP, sendPasswordResetEmail } = require("../nodemailer");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 function generateOTP() {
@@ -203,7 +203,13 @@ exports.forgotpassword = async (req, res) => {
     });
 
     const link = `https://bacUser.kend-production-c8da.up.railway.app/auth/reset-password/${oldUser._id}/${token}`;
-    return res.json({ status: "success", link });
+
+    await sendPasswordResetEmail(email, oldUser.email, link);
+
+    return res.json({
+      status: "success",
+      message: "Password reset link sent to your email",
+    });
   } catch (error) {
     console.error(error);
     return res
