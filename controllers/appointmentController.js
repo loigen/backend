@@ -1,4 +1,5 @@
 const Appointment = require("../schemas/appointmentSchema");
+const User = require("../schemas/User");
 const cloudinary = require("../config/cloudinary");
 const {
   uploadReceipt,
@@ -406,20 +407,31 @@ exports.getCompletionRate = async (req, res) => {
 
 exports.getAppointmentData = async (req, res) => {
   try {
-    const appointments = await Appointment.find().select(
-      "date time appointmentType status firstname lastname avatar sex meetLink qrCode"
-    );
+    // Fetch appointments and populate user details
+    const appointments = await Appointment.find()
+      .populate("userId", "-password -role -otp -status") // Exclude specified fields
+      .select("date time appointmentType status userId");
 
     const appointmentData = appointments.map((appointment) => ({
       id: appointment._id,
       date: appointment.date.toLocaleDateString(),
       time: appointment.time,
-      name: `${appointment.firstname} ${appointment.lastname}`,
       status: appointment.status,
       typeOfCounseling: appointment.appointmentType,
-      avatar: appointment.avatar,
-      email: appointment.email,
-      sex: appointment.sex,
+      user: {
+        id: appointment.userId._id,
+        firstname: appointment.userId.firstname,
+        lastname: appointment.userId.lastname,
+        middleName: appointment.userId.middleName,
+        profession: appointment.userId.Profession,
+        educationBackground: appointment.userId.EducationBackground,
+        religion: appointment.userId.Religion,
+        email: appointment.userId.email,
+        sex: appointment.userId.sex,
+        profilePicture: appointment.userId.profilePicture,
+        bio: appointment.userId.bio,
+        birthdate: appointment.userId.birthdate,
+      },
       meetLink: appointment.meetLink,
       qrCode: appointment.qrCode,
     }));
