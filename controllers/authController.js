@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../schemas/User");
 const validator = require("validator");
 const crypto = require("crypto");
-
+const { logUserActivity } = require("../logger/logger.js");
 const { sendEmailOTP, sendPasswordResetEmail } = require("../nodemailer");
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -82,12 +82,14 @@ exports.signup = async (req, res) => {
   );
 
   if (errorMessage) {
+    logUserActivity(email, "Signup Attempt", "Failed - " + errorMessage);
     return res.status(400).json({ error: errorMessage });
   }
 
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
+      logUserActivity(email, "Signup Attempt", "Failed - Email already exists");
       return res.status(400).json({ error: "Email already exists" });
     }
 
@@ -109,9 +111,11 @@ exports.signup = async (req, res) => {
     });
 
     await user.save();
+    logUserActivity(email, "Signup", "Success");
     res.status(201).json({ message: "User created" });
   } catch (error) {
     console.error("Error creating user:", error);
+    logUserActivity(email, "Signup Attempt", "Failed - " + error.message);
     res.status(500).json({ error: "Error creating user" });
   }
 };
@@ -121,16 +125,27 @@ exports.Adminlogin = async (req, res) => {
 
   try {
     if (!email || !password) {
+      logUserActivity(
+        email,
+        "Admin Login Attempt",
+        "Failed - Email and password are required"
+      );
       return res.status(400).json({ error: "Email and password are required" });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
+      logUserActivity(
+        email,
+        "Admin Login Attempt",
+        "Failed - User doesn't exist"
+      );
       return res.status(404).json({ error: "User doesn't exist" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      logUserActivity(email, "Admin Login Attempt", "Failed - Wrong password");
       return res.status(401).json({ error: "Wrong password" });
     }
 
@@ -142,10 +157,16 @@ exports.Adminlogin = async (req, res) => {
 
     // Send OTP to admin email
     await sendEmailOTP(user.email, otp);
+    logUserActivity(email, "Admin Login", "OTP sent to email");
 
     res.status(200).json({ message: "OTP sent to your email" });
   } catch (error) {
     console.error("Admin login error:", error);
+    logUserActivity(
+      email,
+      "Admin Login Attempt",
+      "Failed - Internal server error"
+    );
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -156,35 +177,55 @@ exports.login = async (req, res) => {
 
   try {
     if (!email || !password) {
+      logUserActivity(
+        email,
+        "User Login Attempt",
+        "Failed - Email and password are required"
+      );
       return res.status(400).json({ error: "Email and password are required" });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
+      logUserActivity(
+        email,
+        "User Login Attempt",
+        "Failed - User doesn't exist"
+      );
       return res.status(404).json({ error: "User doesn't exist" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      logUserActivity(email, "User Login Attempt", "Failed - Wrong password");
       return res.status(401).json({ error: "Wrong password" });
     }
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
     req.session.token = token;
 
+    logUserActivity(email, "User Login", "Success");
     res.status(200).json({ token, role: user.role });
   } catch (error) {
     console.error("Login error:", error);
+    logUserActivity(
+      email,
+      "User Login Attempt",
+      "Failed - Internal server error"
+    );
     res.status(500).json({ error: "Server error" });
   }
 };
 
 //Logout
 exports.logout = (req, res) => {
+  const email = req.user?.email; // Assuming you store user email in the session
   req.session.destroy((err) => {
     if (err) {
+      logUserActivity(email, "Logout Attempt", "Failed - " + err.message);
       return res.status(500).json({ error: "Failed to logout" });
     }
+    logUserActivity(email, "Logout", "Success");
     res.status(200).json({ message: "Logged out successfully" });
   });
 };
@@ -194,6 +235,11 @@ exports.forgotpassword = async (req, res) => {
   try {
     const oldUser = await User.findOne({ email });
     if (!oldUser) {
+      logUserActivity(
+        email,
+        "Forgot Password Attempt",
+        "Failed - User not existed"
+      );
       return res.json({ status: "User not existed" });
     }
 
@@ -205,6 +251,7 @@ exports.forgotpassword = async (req, res) => {
     const link = `https://backend-production-c8da.up.railway.app/auth/reset-password/${oldUser._id}/${token}`;
 
     await sendPasswordResetEmail(email, oldUser.email, link);
+    logUserActivity(email, "Forgot Password", "Success");
 
     return res.json({
       status: "success",
@@ -212,6 +259,11 @@ exports.forgotpassword = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    logUserActivity(
+      email,
+      "Forgot Password Attempt",
+      "Failed - " + error.message
+    );
     return res
       .status(500)
       .json({ status: "error", message: "An error occurred" });
