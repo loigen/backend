@@ -1,0 +1,3 @@
+2024-10-21T07:57:37.304Z - UserID: 22104626@usc.edu.ph, Event: Admin Login Attempt, Status: Failed - Internal server error
+2024-10-21T08:00:49.870Z - UserID: 22104626@usc.edu.ph, Event: Admin Login Attempt, Status: Failed - Internal server error
+2024-10-21T08:02:21.125Z - UserID: 22104626@usc.edu.ph, Event: Admin Login, Status: OTP sent to email

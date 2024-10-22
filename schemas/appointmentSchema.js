@@ -83,7 +83,7 @@ const appointmentSchema = new Schema(
     timestamps: true,
   }
 );
-appointmentSchema.index({ status: 1 });
+appointmentSchema.index({ date: 1, status: 1 });
 
 const Appointment = mongoose.model("Appointment", appointmentSchema);
 

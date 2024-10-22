@@ -4,17 +4,19 @@ const { sendAppointmentReminder } = require("../nodemailer");
 
 const checkAppointments = async () => {
   const now = new Date();
-  const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+  const oneHourLater = new Date(now.getTime() + 1 * 60 * 60 * 1000); // 1 hour later
 
   try {
+    // Find appointments scheduled between now and one hour from now
     const appointments = await Appointment.find({
       date: {
-        $lte: twoHoursLater,
+        $lte: oneHourLater,
         $gt: now,
       },
       status: "accepted",
     });
 
+    // Send a reminder email for each appointment found
     appointments.forEach((appointment) => {
       sendReminderEmail(appointment);
     });
@@ -38,9 +40,10 @@ const sendReminderEmail = (appointment) => {
     });
 };
 
+// Schedule the job to run every 30 minutes
 const startAppointmentCheck = () => {
   cron.schedule("*/30 * * * *", () => {
-    console.log("Checking for appointments approaching within 2 hours...");
+    console.log("Checking for appointments approaching within 1 hour...");
     checkAppointments();
   });
 };

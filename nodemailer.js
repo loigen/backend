@@ -3,8 +3,7 @@
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 const { getRefreshToken } = require("./fetchRefresh");
-const { auth } = require("firebase-admin");
-const { refreshToken } = require("firebase-admin/app");
+
 dotenv.config();
 
 const CLIENT_ID = process.env.CLIENT_ID;
