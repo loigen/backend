@@ -201,6 +201,16 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: "Wrong password" });
     }
 
+    // Check if the user's role is admin
+    if (user.role === "admin") {
+      logUserActivity(
+        email,
+        "User Login Attempt",
+        "Failed - Admins are not allowed to log in"
+      );
+      return res.status(403).json({ error: "Not allowed" });
+    }
+
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
     req.session.token = token;
 
