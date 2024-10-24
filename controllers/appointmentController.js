@@ -114,8 +114,13 @@ exports.createAppointment = [
         role,
         avatar,
         sex,
+        primaryComplaint,
+        historyOfIntervention,
+        briefDetails,
+        consultationMethod,
       } = req.body;
 
+      // Check for required fields
       if (
         !date ||
         !time ||
@@ -133,12 +138,14 @@ exports.createAppointment = [
         });
       }
 
+      // Upload receipt to Cloudinary
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: "receipts",
         resource_type: "auto",
       });
       const receiptUrl = result.secure_url;
 
+      // Create new appointment
       const newAppointment = new Appointment({
         date,
         time,
@@ -151,8 +158,13 @@ exports.createAppointment = [
         avatar,
         sex,
         receipt: receiptUrl,
+        primaryComplaint, // New field
+        historyOfIntervention, // New field
+        briefDetails, // New field
+        consultationMethod, // New field
       });
 
+      // Save the new appointment to the database
       await newAppointment.save();
       res.status(201).json(newAppointment);
     } catch (error) {

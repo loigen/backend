@@ -72,19 +72,40 @@ const appointmentSchema = new Schema(
       type: String,
       required: false,
     },
-
     qrCode: {
       type: String,
       required: false,
     },
-    note: { type: String, default: "" },
+    note: {
+      type: String,
+      default: "",
+    },
+    primaryComplaint: {
+      type: String,
+      required: false, // Optional field
+    },
+    historyOfIntervention: {
+      type: String,
+      required: false, // Optional field
+    },
+    briefDetails: {
+      type: String,
+      required: false, // Optional field
+    },
+    consultationMethod: {
+      type: String,
+      required: false, // Optional field
+    },
   },
   {
-    timestamps: true,
+    timestamps: true, // This will add createdAt and updatedAt fields
   }
 );
+
+// Index for quick lookup based on date and status
 appointmentSchema.index({ date: 1, status: 1 });
 
+// Model creation
 const Appointment = mongoose.model("Appointment", appointmentSchema);
 
 module.exports = Appointment;
