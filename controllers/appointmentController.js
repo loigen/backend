@@ -9,6 +9,7 @@ const {
 const mongoose = require("mongoose");
 const { json } = require("express");
 const { sendAppointmentReminder } = require("../nodemailer");
+const moment = require("moment");
 
 exports.rescheduleAppointment = async (req, res) => {
   try {
