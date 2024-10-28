@@ -64,6 +64,10 @@ const appointmentSchema = new Schema(
       type: String,
       required: false,
     },
+    meetPlace: {
+      type: String,
+      required: false,
+    },
     sex: {
       type: String,
       required: true,

@@ -312,21 +312,23 @@ exports.cancelAppointments = async (req, res) => {
 exports.acceptAppointment = async (req, res) => {
   try {
     const { id } = req.params;
-    const { meetLink } = req.body;
-
-    if (!meetLink) {
-      return res
-        .status(400)
-        .json({ message: "Meet link is required to accept the appointment" });
-    }
+    const { meetLink, meetPlace } = req.body;
 
     const appointment = await Appointment.findById(id);
     if (!appointment) {
       return res.status(404).json({ message: "Appointment not found" });
     }
 
+    // Update appointment status and optional fields
     appointment.status = "accepted";
-    appointment.meetLink = meetLink;
+
+    if (meetLink) {
+      appointment.meetLink = meetLink;
+    }
+
+    if (meetPlace) {
+      appointment.meetPlace = meetPlace;
+    }
 
     await appointment.save();
 
