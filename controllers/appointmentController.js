@@ -8,6 +8,7 @@ const {
 } = require("../middlewares/multer");
 const mongoose = require("mongoose");
 const { json } = require("express");
+const { sendAppointmentReminder } = require("../nodemailer");
 
 exports.rescheduleAppointment = async (req, res) => {
   try {
@@ -931,5 +932,40 @@ exports.addNoteToAppointment = async (req, res) => {
   } catch (error) {
     console.error("Error adding note:", error);
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+exports.handleRemind = async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+
+    // Find the appointment by ID
+    const appointment = await Appointment.findById(appointmentId);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    // Destructure necessary details from the appointment
+    const { email, firstname, date, time, status } = appointment;
+
+    // Check if the appointment is in an acceptable status for reminders
+    if (status !== "accepted") {
+      return res.status(400).json({
+        message: "Reminders can only be sent for accepted appointments.",
+      });
+    }
+
+    // Format date for email
+    const formattedDate = moment(date).format("YYYY-MM-DD");
+
+    // Send the reminder email
+    await sendAppointmentReminder(email, firstname, formattedDate, time);
+
+    res.status(200).json({
+      message: "Reminder email sent successfully",
+      appointmentId,
+    });
+  } catch (error) {
+    console.error("Error sending appointment reminder:", error);
+    res.status(500).json({ error: "Failed to send appointment reminder" });
   }
 };

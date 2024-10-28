@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const appointmentController = require("../controllers/appointmentController"); // Adjust the path as needed
-const { put, patch, get } = require("./appointmentRoutes");
+const { put, patch, get, post } = require("./appointmentRoutes");
 
 // Create a new appointment
 router.post("/appointments", appointmentController.createAppointment);
@@ -88,5 +88,7 @@ router.patch(
 );
 
 router.put("/:appointmentId/note", appointmentController.addNoteToAppointment);
+
+router.post("/remind/:appointmentId", appointmentController.handleRemind);
 
 module.exports = router;
