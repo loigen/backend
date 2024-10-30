@@ -285,9 +285,33 @@ exports.addAdminUser = async (req, res) => {
       .status(201)
       .json({ message: "Admin user created successfully!", user: newUser });
   } catch (error) {
+    // Log the error to the console for debugging
+    console.error("Error creating admin user:", error);
+
+    // Send a detailed error message to the client
     res.status(500).json({
       message: "An error occurred while creating the admin user.",
-      error: error.message,
+      error: {
+        message: error.message,
+        stack: process.env.NODE_ENV === "development" ? error.stack : undefined, // Show stack trace only in development
+      },
     });
+  }
+};
+exports.getAdminUsers = async (req, res) => {
+  try {
+    const adminUsers = await User.find({ role: "admin" });
+
+    // If no admin users are found, return a 404 status
+    if (adminUsers.length === 0) {
+      return res.status(404).json({ message: "No admin users found." });
+    }
+
+    // Return the found admin users
+    return res.status(200).json(adminUsers);
+  } catch (error) {
+    // Handle any errors that occur during the database query
+    console.error("Error fetching admin users:", error);
+    return res.status(500).json({ message: "Internal server error." });
   }
 };

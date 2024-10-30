@@ -50,4 +50,6 @@ router.get("/", userController.getUser);
 
 router.post("/add-admin", userController.addAdminUser);
 
+router.get("/adminUsers", userController.getAdminUsers);
+
 module.exports = router;
