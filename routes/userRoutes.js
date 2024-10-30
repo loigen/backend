@@ -6,6 +6,7 @@ const authController = require("../controllers/authController");
 const checkAdmin = require("../middlewares/checkAdmin");
 const authenticateToken = require("../middlewares/authenticateToken");
 const { uploadProfilePicture } = require("../middlewares/multer");
+const { post } = require("./authRoutes");
 
 router.get("/profile", authenticateToken, userController.getProfile);
 
@@ -46,4 +47,7 @@ router.post("/logout", authenticateToken, authController.logout);
 router.get("/find/:userId", userController.findUser);
 
 router.get("/", userController.getUser);
+
+router.post("/add-admin", userController.addAdminUser);
+
 module.exports = router;

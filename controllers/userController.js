@@ -1,6 +1,8 @@
 const User = require("../schemas/User");
 const cloudinary = require("../config/cloudinary");
 const bcrypt = require("bcryptjs");
+const { json } = require("express");
+const { save } = require("node-cron/src/storage");
 
 // get user profile
 exports.getProfile = async (req, res) => {
@@ -231,5 +233,61 @@ exports.getUser = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json(error);
+  }
+};
+
+exports.addAdminUser = async (req, res) => {
+  try {
+    const {
+      firstname,
+      lastname,
+      middleName,
+      Profession,
+      EducationBackground,
+      Religion,
+      email,
+      sex,
+      password,
+      birthdate,
+      bio,
+    } = req.body;
+
+    // Check if the user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ message: "User already exists with this email." });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create the new admin user
+    const newUser = new User({
+      firstname,
+      lastname,
+      middleName,
+      Profession,
+      EducationBackground,
+      Religion,
+      email,
+      sex,
+      password: hashedPassword,
+      role: "admin",
+      birthdate,
+      bio,
+    });
+
+    await newUser.save();
+
+    res
+      .status(201)
+      .json({ message: "Admin user created successfully!", user: newUser });
+  } catch (error) {
+    res.status(500).json({
+      message: "An error occurred while creating the admin user.",
+      error: error.message,
+    });
   }
 };
