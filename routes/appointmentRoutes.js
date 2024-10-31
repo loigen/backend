@@ -80,7 +80,10 @@ router.patch("/complete/:id", appointmentController.completeAppointment);
 
 router.put("/:id/reschedule", appointmentController.rescheduleAppointment);
 
-router.put("/:id/reqReschedule", appointmentController.rescheduleAppointment);
+router.put(
+  "/:id/reqReschedule",
+  appointmentController.reqRescheduleAppointment
+);
 
 router.patch(
   "/:id/update-status-rescheduled",
