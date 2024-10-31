@@ -230,23 +230,24 @@ exports.login = async (req, res) => {
         "User Login Attempt",
         "Failed - User doesn't exist"
       );
-      return res.status(404).json({ error: "User doesn't exist" });
+      return res.status(404).json({ error: "User not found" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       logUserActivity(email, "User Login Attempt", "Failed - Wrong password");
-      return res.status(401).json({ error: "Wrong password" });
+      return res.status(401).json({ error: "Incorrect password" });
     }
 
-    // Check if the user's role is admin
     if (user.role === "admin") {
       logUserActivity(
         email,
         "User Login Attempt",
         "Failed - Admins are not allowed to log in"
       );
-      return res.status(403).json({ error: "Not allowed" });
+      return res
+        .status(403)
+        .json({ error: "Admin user, please use the admin login form!" });
     }
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
@@ -261,7 +262,7 @@ exports.login = async (req, res) => {
       "User Login Attempt",
       "Failed - Internal server error"
     );
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "An error occurred. Please try again." });
   }
 };
 
