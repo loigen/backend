@@ -370,3 +370,43 @@ exports.verifyOtp = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error });
   }
 };
+exports.resendOtp = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      logUserActivity(email, "Resend OTP Attempt", "Failed - User not found");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the previous OTP is still valid
+    if (user.otpExpiration > new Date()) {
+      logUserActivity(email, "Resend OTP Attempt", "Failed - OTP still valid");
+      return res
+        .status(400)
+        .json({ message: "OTP is still valid, please check your email" });
+    }
+
+    // Generate a new OTP
+    const otp = generateOTP();
+    user.otp = otp;
+    user.otpExpiration = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
+    await user.save();
+
+    // Send the new OTP to the user's email
+    await sendEmailOTP(user.email, otp);
+    logUserActivity(email, "Resend OTP", "Success - OTP sent");
+
+    res.status(200).json({ message: "New OTP sent to your email" });
+  } catch (error) {
+    console.error("Error resending OTP:", error);
+    logUserActivity(
+      email,
+      "Resend OTP Attempt",
+      "Failed - Internal server error"
+    );
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

@@ -8,6 +8,7 @@ const {
   updatePassword,
   Adminlogin,
   verifyOtp,
+  resendOtp,
 } = require("../controllers/authController");
 const authenticateToken = require("../middlewares/authenticateToken");
 
@@ -28,5 +29,7 @@ router.post("/reset-password/:id/:token", updatePassword);
 router.post("/AdminLogin", Adminlogin);
 
 router.post("/verify-otp", verifyOtp);
+
+router.post("/resend-otp", resendOtp);
 
 module.exports = router;
