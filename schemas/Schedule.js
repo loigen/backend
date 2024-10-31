@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 
 const scheduleSchema = new mongoose.Schema({
-  datetime: { type: Date, required: true },
+  date: { type: Date, required: true },
+  time: { type: String, required: true },
   status: { type: String, default: "free" },
 });
 

@@ -31,43 +31,19 @@ exports.addFreeTimeSlot = async (req, res) => {
       return res.status(400).json({ message: "Date and time are required" });
     }
 
-    // Combine date and time into a single Date object
-    const requestedTime = new Date(`${date}T${time}`);
-
-    // Check for existing slots at the exact requested datetime
-    const existingExactSlot = await Schedule.findOne({
-      datetime: requestedTime,
+    const existingSlot = await Schedule.findOne({
+      date: new Date(date),
+      time,
       status: "free",
     });
 
-    if (existingExactSlot) {
-      return res
-        .status(400)
-        .json({ message: "Exact time slot already exists" });
-    }
-
-    // Calculate the start and end of the 2-hour interval
-    const startTime = new Date(requestedTime);
-    const endTime = new Date(requestedTime);
-    endTime.setHours(endTime.getHours() + 2); // Add 2 hours
-
-    // Check for existing slots within the 2-hour interval
-    const existingIntervalSlot = await Schedule.findOne({
-      datetime: {
-        $gte: startTime,
-        $lt: endTime,
-      },
-      status: "free",
-    });
-
-    if (existingIntervalSlot) {
-      return res.status(400).json({
-        message: "Time slot already exists within the 2-hour interval",
-      });
+    if (existingSlot) {
+      return res.status(400).json({ message: "Time slot already exists" });
     }
 
     const freeSlot = new Schedule({
-      datetime: requestedTime,
+      date: new Date(date),
+      time,
       status: "free",
     });
 
