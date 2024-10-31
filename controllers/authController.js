@@ -381,14 +381,6 @@ exports.resendOtp = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check if the previous OTP is still valid
-    if (user.otpExpiration > new Date()) {
-      logUserActivity(email, "Resend OTP Attempt", "Failed - OTP still valid");
-      return res
-        .status(400)
-        .json({ message: "OTP is still valid, please check your email" });
-    }
-
     // Generate a new OTP
     const otp = generateOTP();
     user.otp = otp;
