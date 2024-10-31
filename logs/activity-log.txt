@@ -1,3 +1,8 @@
 2024-10-21T07:57:37.304Z - UserID: 22104626@usc.edu.ph, Event: Admin Login Attempt, Status: Failed - Internal server error
 2024-10-21T08:00:49.870Z - UserID: 22104626@usc.edu.ph, Event: Admin Login Attempt, Status: Failed - Internal server error
 2024-10-21T08:02:21.125Z - UserID: 22104626@usc.edu.ph, Event: Admin Login, Status: OTP sent to email
+2024-10-31T07:49:41.046Z - UserID: lariosaloigen5@gmail.com, Event: Admin Login Attempt, Status: Failed - Wrong password
+2024-10-31T07:49:43.417Z - UserID: lariosaloigen5@gmail.com, Event: Admin Login Attempt, Status: Failed - Wrong password
+2024-10-31T07:49:45.280Z - UserID: lariosaloigen5@gmail.com, Event: Admin Login Attempt, Status: Failed - Wrong password
+2024-10-31T07:49:46.844Z - UserID: lariosaloigen5@gmail.com, Event: Admin Login Attempt, Status: Failed - Wrong password
+2024-10-31T07:49:47.699Z - UserID: lariosaloigen5@gmail.com, Event: Admin Login Attempt, Status: Failed - Wrong password

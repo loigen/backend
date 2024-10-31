@@ -5,7 +5,8 @@ const validator = require("validator");
 const crypto = require("crypto");
 const { logUserActivity } = require("../logger/logger.js");
 const { sendEmailOTP, sendPasswordResetEmail } = require("../nodemailer");
-
+const LOCKOUT_DURATION = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+const MAX_ATTEMPTS = 5;
 const JWT_SECRET = process.env.JWT_SECRET;
 function generateOTP() {
   return crypto.randomInt(100000, 999999).toString();
@@ -143,11 +144,49 @@ exports.Adminlogin = async (req, res) => {
       return res.status(404).json({ error: "User doesn't exist" });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      logUserActivity(email, "Admin Login Attempt", "Failed - Wrong password");
-      return res.status(401).json({ error: "Wrong password" });
+    // Check if user is in lockout period
+    if (user.lockoutUntil && user.lockoutUntil > Date.now()) {
+      const remainingTime = Math.ceil(
+        (user.lockoutUntil - Date.now()) / (60 * 1000)
+      ); // in minutes
+      return res.status(403).json({
+        error: `Account locked. Try again in ${remainingTime} minutes.`,
+      });
     }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      user.failedAttempts = (user.failedAttempts || 0) + 1;
+
+      if (user.failedAttempts >= MAX_ATTEMPTS) {
+        // Set lockout time for 3 hours
+        user.lockoutUntil = new Date(Date.now() + LOCKOUT_DURATION);
+        user.failedAttempts = 0; // Reset attempts after lockout
+        await user.save();
+
+        logUserActivity(
+          email,
+          "Admin Login Attempt",
+          "Failed - Account locked after too many attempts"
+        );
+        return res.status(403).json({
+          error: "Too many failed attempts. Account locked for 3 hours.",
+        });
+      } else {
+        await user.save();
+        logUserActivity(
+          email,
+          "Admin Login Attempt",
+          "Failed - Wrong password"
+        );
+        return res.status(401).json({ error: "Wrong password" });
+      }
+    }
+
+    // Reset failed attempts on successful login
+    user.failedAttempts = 0;
+    user.lockoutUntil = null;
 
     // Generate and set OTP for admin verification
     const otp = generateOTP();
@@ -170,7 +209,6 @@ exports.Adminlogin = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
 // Login
 exports.login = async (req, res) => {
   const { email, password } = req.body;
