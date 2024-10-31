@@ -29,4 +29,7 @@ router.put("/:draftId/update", blogController.updateDraft);
 router.put("/:draftId/publish", blogController.publishDraft);
 
 router.put("/:blogId/edit", blogController.editPublishedBlog);
+
+router.delete("/:blogId", blogController.deleteBlog);
+
 module.exports = router;
