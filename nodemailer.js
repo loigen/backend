@@ -39,7 +39,7 @@ const sendEmailOTP = async (to, otp) => {
   const subject = "Your Verification Code";
   const html = `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f4f4; border-radius: 5px;">
-          <h2 style="color: #333;">Dear ${to},</h2>
+          <h2 style="color: #333;">Hello ${to},</h2>
           <p>Your verification code is as follows:</p>
           <h3 style="background-color: #e7f3fe; padding: 10px; border: 1px solid #b3d4fc; color: #31708f;">OTP: ${otp}</h3>
           <p>Please use this code to complete your verification process.</p>
@@ -82,7 +82,7 @@ const sendAppointmentReminder = async (to, firstname, date, time) => {
   const subject = "Appointment Reminder Notification";
   const html = `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f4f4; border-radius: 5px;">
-          <h2 style="color: #333;">Dear ${firstname},</h2>
+          <h2 style="color: #333;">Hello ${firstname},</h2>
           <p>This is a reminder regarding your upcoming appointment scheduled for:</p>
           <p style="font-weight: bold;">Date: <strong>${date}</strong><br>Time: <strong>${time}</strong></p>
           <p>We look forward to seeing you.</p>
@@ -125,7 +125,7 @@ const sendPasswordResetEmail = async (to, username, link) => {
   const subject = "Password Reset Request";
   const html = `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f4f4; border-radius: 5px;">
-          <h2 style="color: #333;">Dear ${username},</h2>
+          <h2 style="color: #333;">Hello ${username},</h2>
           <p>You have requested to reset your password. Please click the link below to proceed:</p>
           <p style="font-weight: bold;"><a href="${link}" style="color: #007bff; text-decoration: none;">Reset Your Password</a></p>
           <p>This link will expire in 5 minutes.</p>
