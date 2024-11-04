@@ -427,7 +427,7 @@ exports.resendOtp = async (req, res) => {
     await user.save();
 
     // Send the new OTP to the user's email
-    await sendEmailOTP(user.email, user.lastname, otp);
+    await sendEmailOTP(user.email, otp, user.lastname);
     logUserActivity(email, "Resend OTP", "Success - OTP sent");
 
     res.status(200).json({ message: "New OTP sent to your email" });

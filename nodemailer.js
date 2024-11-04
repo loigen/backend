@@ -12,7 +12,7 @@ const REFRESH_TOKEN = process.env.GMAIL_REFRESH_TOKEN;
 const REDIRECT_URI = "https://developers.google.com/oauthplayground";
 const MY_EMAIL = process.env.TEST_EMAIL;
 
-const sendEmailOTP = async (to, lastname, otp) => {
+const sendEmailOTP = async (to, otp, lastname) => {
   const response = await getRefreshToken(
     REFRESH_TOKEN,
     CLIENT_ID,
