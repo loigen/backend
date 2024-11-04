@@ -122,7 +122,6 @@ exports.createAppointment = [
         consultationMethod,
       } = req.body;
 
-      // Check for required fields
       if (
         !date ||
         !time ||
