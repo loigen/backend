@@ -12,7 +12,7 @@ const REFRESH_TOKEN = process.env.GMAIL_REFRESH_TOKEN;
 const REDIRECT_URI = "https://developers.google.com/oauthplayground";
 const MY_EMAIL = process.env.TEST_EMAIL;
 
-const sendEmailOTP = async (to, otp) => {
+const sendEmailOTP = async (to, lastname, otp) => {
   const response = await getRefreshToken(
     REFRESH_TOKEN,
     CLIENT_ID,
@@ -39,7 +39,7 @@ const sendEmailOTP = async (to, otp) => {
   const subject = "Your Verification Code";
   const html = `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f4f4; border-radius: 5px;">
-          <h2 style="color: #333;">Hello ${to},</h2>
+          <h2 style="color: #333;">Hello Mr/Mrs. ${lastname},</h2>
           <p>Your verification code is as follows:</p>
           <h3 style="background-color: #e7f3fe; padding: 10px; border: 1px solid #b3d4fc; color: #31708f;">OTP: ${otp}</h3>
           <p>Please use this code to complete your verification process.</p>
