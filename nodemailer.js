@@ -39,7 +39,7 @@ const sendEmailOTP = async (to, otp, lastname) => {
   const subject = "Your Verification Code";
   const html = `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f4f4; border-radius: 5px;">
-          <h2 style="color: #333;">Hello Mr/Mrs. ${lastname},</h2>
+          <h2 style="color: #333;text-transform:capitalize;">Hello Mr/Mrs. ${lastname},</h2>
           <p>Your verification code is as follows:</p>
           <h3 style="background-color: #e7f3fe; padding: 10px; border: 1px solid #b3d4fc; color: #31708f;">OTP: ${otp}</h3>
           <p>Please use this code to complete your verification process.</p>
