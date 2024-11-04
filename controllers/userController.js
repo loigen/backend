@@ -35,13 +35,32 @@ exports.adminFunction = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { firstname, lastname, email, password } = req.body;
+    const {
+      firstname,
+      lastname,
+      email,
+      bio,
+      birthdate,
+      middleName,
+      Profession,
+      EducationBackground,
+      Religion,
+      sex,
+    } = req.body;
 
-    let updatedUserData = { firstname, lastname, email };
-
-    if (password) {
-      updatedUserData.password = password;
-    }
+    // Define only the fields you want to update
+    let updatedUserData = {
+      firstname,
+      lastname,
+      email,
+      bio,
+      birthdate,
+      middleName,
+      Profession,
+      EducationBackground,
+      Religion,
+      sex,
+    };
 
     if (req.file) {
       try {
@@ -60,7 +79,7 @@ exports.updateProfile = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(userId, updatedUserData, {
       new: true,
       runValidators: true,
-    }).select("-password");
+    }).select("-password -role -status -otp -otpExpiration");
 
     if (!updatedUser) {
       return res.status(404).json({ error: "User not found" });
