@@ -1,19 +1,17 @@
 const { Server } = require("socket.io");
 
 let onlineUser = [];
-const corsOptions = {
-  origin:
-    process.env.NODE_ENV === "production"
-      ? "https://frontend-loigens-projects.vercel.app"
-      : "http://localhost:3000", // Allow localhost for development
-  methods: ["GET", "POST"],
-  credentials: true,
-};
 
-// Apply CORS middleware
 const socketServer = (server) => {
   const io = new Server(server, {
-    cors: corsOptions,
+    cors: {
+      origin:
+        process.env.NODE_ENV === "production"
+          ? "https://frontend-loigens-projects.vercel.app"
+          : "*",
+      methods: ["GET", "POST"],
+      credentials: true,
+    },
   });
 
   io.on("connection", (socket) => {
