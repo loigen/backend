@@ -44,9 +44,9 @@ const sendEmailOTP = async (to, otp, lastname) => {
         </div>
         <div style="padding: 20px; background-color: #ffffff; border-radius: 0 0 5px 5px;">
           <h3 style="color: #333333; text-transform: capitalize;">Dear SafePlace Admin,</h3>
-          <p>We received a request to access your SafePlace Account <span style="color: #31708f;">[email of the receiver]</span> through your email address. Your SafePlace verification code is:</p>
-          <h1 style="background-color: #e7f3fe; padding: 15px; border: 1px solid #b3d4fc; color: #31708f; text-align: center; border-radius: 5px;">600342</h1>
-          <p>If you did not request this code, it is possible that someone else is trying to access your SafePlace account <span style="color: #31708f;">[email of the receiver]</span>. <strong>Do not forward or give this code to anyone.</strong></p>
+          <p>We received a request to access your SafePlace Account <span style="color: #31708f;">${to}</span> through your email address. Your SafePlace verification code is:</p>
+          <h1>${otp}</h1>
+          <p>If you did not request this code, it is possible that someone else is trying to access your SafePlace account <span style="color: #31708f;">${to}</span>. <strong>Do not forward or give this code to anyone.</strong></p>
           <p style="color: #666666;">You received this message because this email address is listed as an admin in the SafePlace system.</p>
           <p>Sincerely yours,</p>
           <p style="font-weight: bold;">safeplacewithdr.jeb</p>
