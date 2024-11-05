@@ -1,17 +1,28 @@
+const express = require("express");
+const cors = require("cors");
 const { Server } = require("socket.io");
 
+const app = express();
+
+// CORS Configuration
+const corsOptions = {
+  origin:
+    process.env.NODE_ENV === "production"
+      ? "https://safeplace-murex.vercel.app/"
+      : "http://localhost:3000", // Allow localhost for development
+  methods: ["GET", "POST"],
+  credentials: true,
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+// Your socket.io setup
 let onlineUser = [];
 
 const socketServer = (server) => {
   const io = new Server(server, {
-    cors: {
-      origin:
-        process.env.NODE_ENV === "production"
-          ? "https://frontend-loigens-projects.vercel.app"
-          : "*",
-      methods: ["GET", "POST"],
-      credentials: true,
-    },
+    cors: corsOptions, // Use the same CORS options for socket.io
   });
 
   io.on("connection", (socket) => {
@@ -50,4 +61,9 @@ const socketServer = (server) => {
   });
 };
 
-module.exports = socketServer;
+// Start your Express server and socket server
+const server = app.listen(process.env.PORT || 5000, () => {
+  console.log(`Server running on port ${process.env.PORT || 5000}`);
+});
+
+socketServer(server);
