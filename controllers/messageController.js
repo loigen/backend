@@ -4,7 +4,7 @@ const messageModel = require("../schemas/messageModel");
 
 // Define encryption configurations
 const algorithm = "aes-256-cbc";
-const secretKey = crypto.randomBytes(32); // Generate a 256-bit (32-byte) secret key
+const secretKey = process.env.SECRET_KEY || crypto.randomBytes(32).toString('hex'); // Replace with a fixed secret key in production
 const iv = crypto.randomBytes(16); // Generate a 16-byte IV (initialization vector)
 
 // Function to encrypt text
