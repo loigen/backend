@@ -38,16 +38,21 @@ const sendEmailOTP = async (to, otp, lastname) => {
   const from = MY_EMAIL;
   const subject = "Your Verification Code";
   const html = `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f4f4; border-radius: 5px;">
-          <h2 style="color: #fff;width:100%,text-align:center;text-transform:capitalize;background:#68B2A0">Safeplace Verification Code</h2>
-          <h2 style="color: #333;text-transform:capitalize;">Dear Safeplace Admin,</h2>
-          <p>We received a request to access your SafePlace Account ${to} through your email address. Your SafePlace verification code is:</p>
-          <h1 style="background-color: #e7f3fe; padding: 10px; border: 1px solid #b3d4fc; color: #31708f;">${otp}</h3>
-          <p>If you did not request this code, it is possible that someone else is trying to access your SafePlace account ${to}. <b>Don not forward or give this code to anyone</b>.</p>
-          <p>You received this message because this email address is listed as an admin in the SafePlace system.</p>
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f4f4; border-radius: 5px; max-width: 600px; margin: 0 auto;">
+        <div style="text-align: center; padding: 15px 0; background-color: #68B2A0; color: #ffffff; border-radius: 5px 5px 0 0;">
+          <h2 style="margin: 0; text-transform: capitalize;">SafePlace Verification Code</h2>
+        </div>
+        <div style="padding: 20px; background-color: #ffffff; border-radius: 0 0 5px 5px;">
+          <h3 style="color: #333333; text-transform: capitalize;">Dear SafePlace Admin,</h3>
+          <p>We received a request to access your SafePlace Account <span style="color: #31708f;">[email of the receiver]</span> through your email address. Your SafePlace verification code is:</p>
+          <h1 style="background-color: #e7f3fe; padding: 15px; border: 1px solid #b3d4fc; color: #31708f; text-align: center; border-radius: 5px;">600342</h1>
+          <p>If you did not request this code, it is possible that someone else is trying to access your SafePlace account <span style="color: #31708f;">[email of the receiver]</span>. <strong>Do not forward or give this code to anyone.</strong></p>
+          <p style="color: #666666;">You received this message because this email address is listed as an admin in the SafePlace system.</p>
           <p>Sincerely yours,</p>
-          <p>safeplacewithdr.jeb</p>
+          <p style="font-weight: bold;">safeplacewithdr.jeb</p>
+        </div>
       </div>
+
       `;
 
   return new Promise((resolve, reject) => {
