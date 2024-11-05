@@ -7,7 +7,7 @@ const socketServer = (server) => {
     cors: {
       origin:
         process.env.NODE_ENV === "production"
-          ? "https://safeplace-murex.vercel.app"
+          ? "https://frontend-loigens-projects.vercel.app"
           : "*",
       methods: ["GET", "POST"],
       credentials: true,
