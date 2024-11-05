@@ -1,38 +1,36 @@
 const crypto = require("crypto");
-const bcrypt = require("bcryptjs");
 const messageModel = require("../schemas/messageModel");
 
-// Define encryption configurations
+// Load secret key from environment variables
+require("dotenv").config();
+const secretKey = Buffer.from(process.env.SECRET_KEY, "hex"); // Make sure this is 32 bytes
 const algorithm = "aes-256-cbc";
-const secretKey = process.env.SECRET_KEY || crypto.randomBytes(32).toString('hex'); // Replace with a fixed secret key in production
-const iv = crypto.randomBytes(16); // Generate a 16-byte IV (initialization vector)
 
-// Function to encrypt text
+// Encrypt text function
 const encryptText = (text) => {
+  const iv = crypto.randomBytes(16); // Generate a new IV for each encryption
   const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
   let encrypted = cipher.update(text, "utf8", "hex");
   encrypted += cipher.final("hex");
-  return `${iv.toString("hex")}:${encrypted}`; // Include IV with encrypted text
+  return `${iv.toString("hex")}:${encrypted}`; // Store IV with the ciphertext
 };
 
-// Function to decrypt text
-const decryptText = (text) => {
-  const [ivHex, encryptedText] = text.split(":");
-  const decipher = crypto.createDecipheriv(
-    algorithm,
-    secretKey,
-    Buffer.from(ivHex, "hex")
-  );
-  let decrypted = decipher.update(encryptedText, "hex", "utf8");
+// Decrypt text function
+const decryptText = (encryptedText) => {
+  const [ivHex, encrypted] = encryptedText.split(":"); // Split to get IV and encrypted text
+  if (!ivHex || !encrypted) {
+    throw new Error("Invalid encrypted text format"); // Handle missing IV or ciphertext
+  }
+  const iv = Buffer.from(ivHex, "hex");
+  const decipher = crypto.createDecipheriv(algorithm, secretKey, iv);
+  let decrypted = decipher.update(encrypted, "hex", "utf8");
   decrypted += decipher.final("utf8");
   return decrypted;
 };
 
-// Controller to create a new message
+// Controller to create a new message with encryption
 const createMessage = async (req, res) => {
   const { chatId, senderId, text } = req.body;
-
-  // Encrypt the text before saving
   const encryptedText = encryptText(text);
 
   const message = new messageModel({
@@ -50,13 +48,12 @@ const createMessage = async (req, res) => {
   }
 };
 
-// Controller to retrieve messages for a specific chat
+// Controller to retrieve messages with decryption
 const getMessages = async (req, res) => {
   const { chatId } = req.params;
 
   try {
     const messages = await messageModel.find({ chatId });
-    // Decrypt each message text before sending response
     const decryptedMessages = messages.map((message) => ({
       ...message._doc,
       text: decryptText(message.text),
