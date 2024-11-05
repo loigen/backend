@@ -1,8 +1,8 @@
 const messageModel = require("../schemas/messageModel");
 const crypto = require("crypto");
 
-const secretKey = process.env.SECRET_KEY; // 32-byte key for AES-256
-const iv = process.env.IV; // 16-byte IV for AES
+const secretKey = process.env.SECRET_KEY;
+const iv = process.env.IV;
 
 // Encrypt function
 const encryptText = (text) => {
