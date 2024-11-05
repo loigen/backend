@@ -7,6 +7,7 @@ const { logUserActivity } = require("../logger/logger.js");
 const { sendEmailOTP, sendPasswordResetEmail } = require("../nodemailer");
 const LOCKOUT_DURATION = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
 const MAX_ATTEMPTS = 5;
+
 const JWT_SECRET = process.env.JWT_SECRET;
 function generateOTP() {
   return crypto.randomInt(100000, 999999).toString();
