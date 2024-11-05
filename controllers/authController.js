@@ -195,7 +195,7 @@ exports.Adminlogin = async (req, res) => {
     await user.save();
 
     // Send OTP to admin email
-    await sendEmailOTP(user.email, otp);
+    await sendEmailOTP(user.email, otp, user.lastname);
     logUserActivity(email, "Admin Login", "OTP sent to email");
 
     res.status(200).json({ message: "OTP sent to your email" });
