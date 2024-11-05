@@ -23,6 +23,7 @@ const allowedOrigins = [
   "https://frontend-loigens-projects.vercel.app",
   "https://frontend-eight-alpha-64.vercel.app",
   "https://safeplace-murex.vercel.app",
+  "https://safeplace-system.vercel.app",
 ];
 
 const corsOptions = {
