@@ -34,7 +34,9 @@ const sendEmailOTP = async (to, otp, lastname) => {
       rejectUnauthorized: true,
     },
   });
-
+  // <h1 style="background-color: #e7f3fe; padding: 15px; border: 1px solid #b3d4fc; color: #31708f; text-align: center; border-radius: 5px;">
+  //   600342
+  // </h1>;
   const from = MY_EMAIL;
   const subject = "Your Verification Code";
   const html = `
