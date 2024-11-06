@@ -120,6 +120,7 @@ exports.createAppointment = [
         historyOfIntervention,
         briefDetails,
         consultationMethod,
+        TotalPayment,
       } = req.body;
 
       if (
@@ -132,6 +133,7 @@ exports.createAppointment = [
         !email ||
         !role ||
         !sex ||
+        !TotalPayment ||
         !req.file
       ) {
         return res.status(400).json({
@@ -159,13 +161,13 @@ exports.createAppointment = [
         avatar,
         sex,
         receipt: receiptUrl,
-        primaryComplaint, // New field
-        historyOfIntervention, // New field
-        briefDetails, // New field
-        consultationMethod, // New field
+        primaryComplaint, 
+        historyOfIntervention, 
+        briefDetails, 
+        consultationMethod, 
+        TotalPayment,
       });
 
-      // Save the new appointment to the database
       await newAppointment.save();
       res.status(201).json(newAppointment);
     } catch (error) {

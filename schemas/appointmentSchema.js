@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 
 const appointmentSchema = new Schema(
   {
+    TotalPayment: {
+      type: Number,
+      required: true,
+    },
     date: {
       type: Date,
       required: true,
@@ -58,15 +62,15 @@ const appointmentSchema = new Schema(
     },
     avatar: {
       type: String,
-      required: false,
+      required: false, // Optional field
     },
     meetLink: {
       type: String,
-      required: false,
+      required: false, // Optional field
     },
     meetPlace: {
       type: String,
-      required: false,
+      required: false, // Optional field
     },
     sex: {
       type: String,
@@ -74,11 +78,11 @@ const appointmentSchema = new Schema(
     },
     refundReceipt: {
       type: String,
-      required: false,
+      required: false, // Optional field
     },
     qrCode: {
       type: String,
-      required: false,
+      required: false, // Optional field
     },
     note: {
       type: String,
@@ -102,14 +106,12 @@ const appointmentSchema = new Schema(
     },
   },
   {
-    timestamps: true, // This will add createdAt and updatedAt fields
+    timestamps: true,
   }
 );
 
-// Index for quick lookup based on date and status
 appointmentSchema.index({ date: 1, status: 1 });
 
-// Model creation
 const Appointment = mongoose.model("Appointment", appointmentSchema);
 
 module.exports = Appointment;
