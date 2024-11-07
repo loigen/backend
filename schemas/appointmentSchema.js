@@ -5,7 +5,7 @@ const appointmentSchema = new Schema(
   {
     TotalPayment: {
       type: Number,
-      required: true,
+      required: false,
     },
     date: {
       type: Date,
