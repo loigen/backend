@@ -33,10 +33,6 @@ const blogSchema = new Schema({
     enum: ["draft", "published"],
     required: true,
   },
-  category: {
-    type: String,
-    required: false,
-  },
   readerIDs: [
     {
       type: mongoose.Schema.Types.ObjectId,

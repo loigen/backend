@@ -6,18 +6,15 @@ const { save } = require("node-cron/src/storage");
 
 exports.createBlog = async (req, res) => {
   try {
-    const { title, content, category } = req.body;
+    const { title, content } = req.body;
 
-    if (!title || !content || !category) {
-      return res
-        .status(400)
-        .json({ message: "Title, content, and category are required" });
+    if (!title || !content) {
+      return res.status(400).json({ message: "Title, content are required" });
     }
 
     const newBlog = new Blog({
       title,
       content,
-      category,
       author: "Jeb Doe",
       status: "published",
     });
@@ -35,18 +32,15 @@ exports.createBlog = async (req, res) => {
 
 exports.saveBlogAsDraft = async (req, res) => {
   try {
-    const { title, content, category } = req.body;
+    const { title, content } = req.body;
 
-    if (!title || !content || !category) {
-      return res
-        .status(400)
-        .json({ message: "Title, content, and category are required" });
+    if (!title || !content) {
+      return res.status(400).json({ message: "Title, content are required" });
     }
 
     const newBlog = new Blog({
       title,
       content,
-      category,
       author: "Jeb Doe",
       status: "draft",
     });
@@ -188,7 +182,7 @@ exports.getAllDrafts = async (req, res) => {
 
 exports.updateDraft = async (req, res) => {
   const { draftId } = req.params;
-  const { title, content, category } = req.body;
+  const { title, content } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(draftId)) {
     return res.status(400).json({ message: "Invalid draftId" });
@@ -197,7 +191,7 @@ exports.updateDraft = async (req, res) => {
   try {
     const updatedDraft = await Blog.findByIdAndUpdate(
       draftId,
-      { title, content, category },
+      { title, content },
       { new: true }
     );
 
@@ -241,16 +235,14 @@ exports.publishDraft = async (req, res) => {
 };
 exports.editPublishedBlog = async (req, res) => {
   const { blogId } = req.params;
-  const { title, content, category } = req.body;
+  const { title, content } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(blogId)) {
     return res.status(400).json({ message: "Invalid blogId" });
   }
 
-  if (!title || !content || !category) {
-    return res
-      .status(400)
-      .json({ message: "Title, content, and category are required" });
+  if (!title || !content) {
+    return res.status(400).json({ message: "Title, content are required" });
   }
 
   try {
@@ -262,7 +254,6 @@ exports.editPublishedBlog = async (req, res) => {
 
     blog.title = title;
     blog.content = content;
-    blog.category = category;
 
     const updatedBlog = await blog.save();
 
