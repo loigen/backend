@@ -428,7 +428,7 @@ exports.getAppointmentData = async (req, res) => {
     const appointments = await Appointment.find()
       .populate("userId", "-password -role -otp -status") // Exclude specified fields
       .select(
-        "date qrCode refundReceipt consultationMethod meetLink appointmentType time receipt appointmentType status userId note"
+        "date qrCode refundReceipt primaryComplaint consultationMethod meetLink appointmentType time receipt appointmentType status userId note"
       );
 
     const appointmentData = appointments.map((appointment) => ({
@@ -438,6 +438,9 @@ exports.getAppointmentData = async (req, res) => {
       status: appointment.status,
       typeOfCounseling: appointment.appointmentType,
       receipt: appointment.receipt,
+      primaryComplaint: appointment.primaryComplaint,
+      historyOfIntervention: appointment.historyOfIntervention,
+      TotalPayment: appointment.TotalPayment,
       user: {
         id: appointment.userId._id,
         firstname: appointment.userId.firstname,
