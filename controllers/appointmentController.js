@@ -161,10 +161,10 @@ exports.createAppointment = [
         avatar,
         sex,
         receipt: receiptUrl,
-        primaryComplaint, 
-        historyOfIntervention, 
-        briefDetails, 
-        consultationMethod, 
+        primaryComplaint,
+        historyOfIntervention,
+        briefDetails,
+        consultationMethod,
         TotalPayment,
       });
 
@@ -428,7 +428,7 @@ exports.getAppointmentData = async (req, res) => {
     const appointments = await Appointment.find()
       .populate("userId", "-password -role -otp -status") // Exclude specified fields
       .select(
-        "date qrCode refundReceipt meetLink appointmentType time receipt appointmentType status userId note"
+        "date qrCode refundReceipt consultationMethod meetLink appointmentType time receipt appointmentType status userId note"
       );
 
     const appointmentData = appointments.map((appointment) => ({
@@ -452,6 +452,7 @@ exports.getAppointmentData = async (req, res) => {
         bio: appointment.userId.bio,
         birthdate: appointment.userId.birthdate,
       },
+      consultationMethod: appointment.consultationMethod,
       meetLink: appointment.meetLink,
       qrCode: appointment.qrCode,
       refundReceipt: appointment.refundReceipt,
