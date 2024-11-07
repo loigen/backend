@@ -123,7 +123,7 @@ exports.removeFromFavorites = async (req, res) => {
 
     await blog.save();
 
-    res.status(200).json({ message: "User removed from favorites" });
+    res.status(200).json({ message: "Blog removed from favorites" });
   } catch (error) {
     console.error("Error removing from favorites:", error);
     res.status(500).json({ message: "Internal server error" });
