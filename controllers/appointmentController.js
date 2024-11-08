@@ -428,7 +428,7 @@ exports.getAppointmentData = async (req, res) => {
     const appointments = await Appointment.find()
       .populate("userId", "-password -role -otp -status") // Exclude specified fields
       .select(
-        "date qrCode refundReceipt primaryComplaint consultationMethod meetLink appointmentType time receipt appointmentType status userId note"
+        "date qrCode refundReceipt primaryComplaint historyOfIntervention TotalPayment consultationMethod meetLink appointmentType time receipt appointmentType status userId note"
       );
 
     const appointmentData = appointments.map((appointment) => ({
