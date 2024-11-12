@@ -298,7 +298,7 @@ exports.forgotpassword = async (req, res) => {
       expiresIn: "5m",
     });
 
-    const link = `https://backend-production-c8da.up.railway.app/auth/reset-password/${oldUser._id}/${token}`;
+    const link = `https://backend-vp67.onrender.com/auth/reset-password/${oldUser._id}/${token}`;
 
     await sendPasswordResetEmail(email, oldUser.email, link);
     logUserActivity(email, "Forgot Password", "Success");
