@@ -244,7 +244,9 @@ exports.findUser = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    const user = await User.find();
+    const user = await User.find().select(
+      "-password -otp" // Exclude the password field from the response
+    );
 
     res.status(200).json(user);
   } catch (error) {
