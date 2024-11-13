@@ -1,5 +1,4 @@
 const Appointment = require("../schemas/appointmentSchema");
-const User = require("../schemas/User");
 const cloudinary = require("../config/cloudinary");
 const {
   uploadReceipt,
@@ -7,7 +6,6 @@ const {
   uploadRefundReceipt,
 } = require("../middlewares/multer");
 const mongoose = require("mongoose");
-const { json } = require("express");
 const { sendAppointmentReminder } = require("../nodemailer");
 const moment = require("moment");
 

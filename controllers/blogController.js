@@ -1,4 +1,3 @@
-const { json } = require("express");
 const Blog = require("../schemas/blogSchema");
 const User = require("../schemas/User");
 const mongoose = require("mongoose");

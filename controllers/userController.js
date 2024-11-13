@@ -1,8 +1,6 @@
 const User = require("../schemas/User");
 const cloudinary = require("../config/cloudinary");
 const bcrypt = require("bcryptjs");
-const { json } = require("express");
-const { save } = require("node-cron/src/storage");
 
 // get user profile
 exports.getProfile = async (req, res) => {

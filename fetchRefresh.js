@@ -1,4 +1,3 @@
-const { auth } = require("firebase-admin");
 const { google } = require("googleapis");
 
 // Function to get a new access token using the provided refresh token

@@ -1,7 +1,5 @@
-const { json } = require("express");
 const Schedule = require("../schemas/Schedule");
 const moment = require("moment");
-const { countFreeSlots } = require("./scheduleController");
 
 exports.getFreeTimeSlots = async (req, res) => {
   try {

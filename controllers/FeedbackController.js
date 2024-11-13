@@ -1,4 +1,3 @@
-const { json } = require("express");
 const Feedback = require("../schemas/feedbackSchema");
 
 exports.submitFeedback = async (req, res) => {
