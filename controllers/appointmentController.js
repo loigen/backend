@@ -980,12 +980,6 @@ exports.editNote = async (req, res) => {
   const { note } = req.body; // New note from the request body
 
   try {
-    if (note && note.length > 500) {
-      return res
-        .status(400)
-        .json({ message: "Note exceeds the maximum length of 500 characters" });
-    }
-
     const updatedAppointment = await Appointment.findByIdAndUpdate(
       id,
       { $set: { note } }, // Update the note field
