@@ -57,10 +57,12 @@ exports.saveBlogAsDraft = async (req, res) => {
 
 exports.getAllBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find().sort({ createdDate: -1 });
+    const blogs = await Blog.find({ status: "published" }).sort({
+      createdDate: -1,
+    });
 
     if (!blogs.length) {
-      return res.status(404).json({ message: "No blogs found" });
+      return res.status(404).json({ message: "No published blogs found" });
     }
 
     res.status(200).json({ blogs });
