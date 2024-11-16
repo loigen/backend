@@ -233,13 +233,21 @@ exports.login = async (req, res) => {
       );
       return res.status(404).json({ error: "User not found" });
     }
-
+    if (user.lockoutUntil && user.lockoutUntil > Date.now()) {
+      const remainingTime = Math.ceil(
+        (user.lockoutUntil - Date.now()) / (60 * 1000)
+      ); // in minutes
+      return res.status(403).json({
+        error: `Account locked. Try again in ${remainingTime} minutes.`,
+      });
+    }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       logUserActivity(email, "User Login Attempt", "Failed - Wrong password");
       return res.status(401).json({ error: "Incorrect password" });
     }
-
+    user.failedAttempts = 0;
+    user.lockoutUntil = null;
     if (user.role === "admin") {
       logUserActivity(
         email,
