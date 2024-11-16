@@ -243,8 +243,31 @@ exports.login = async (req, res) => {
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      logUserActivity(email, "User Login Attempt", "Failed - Wrong password");
-      return res.status(401).json({ error: "Incorrect password" });
+      user.failedAttempts = (user.failedAttempts || 0) + 1;
+
+      if (user.failedAttempts >= MAX_ATTEMPTS) {
+        // Set lockout time for 3 hours
+        user.lockoutUntil = new Date(Date.now() + LOCKOUT_DURATION);
+        user.failedAttempts = 0; // Reset attempts after lockout
+        await user.save();
+
+        logUserActivity(
+          email,
+          "Admin Login Attempt",
+          "Failed - Account locked after too many attempts"
+        );
+        return res.status(403).json({
+          error: "Too many failed attempts. Account locked for 3 hours.",
+        });
+      } else {
+        await user.save();
+        logUserActivity(
+          email,
+          "Admin Login Attempt",
+          "Failed - Wrong password"
+        );
+        return res.status(401).json({ error: "Wrong password" });
+      }
     }
     user.failedAttempts = 0;
     user.lockoutUntil = null;
