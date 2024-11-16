@@ -974,3 +974,33 @@ exports.handleRemind = async (req, res) => {
     res.status(500).json({ error: "Failed to send appointment reminder" });
   }
 };
+
+exports.editNote = async (req, res) => {
+  const { id } = req.params; // Appointment ID from the route
+  const { note } = req.body; // New note from the request body
+
+  try {
+    if (note && note.length > 500) {
+      return res
+        .status(400)
+        .json({ message: "Note exceeds the maximum length of 500 characters" });
+    }
+
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      id,
+      { $set: { note } }, // Update the note field
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedAppointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    res.status(200).json({
+      message: "Note updated successfully",
+      appointment: updatedAppointment,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating note", error });
+  }
+};
