@@ -136,6 +136,9 @@ exports.disapproveRequest = async (req, res) => {
     appointment.requestedTime = undefined; // Clear the requested time
     appointment.status = previousStatus; // Set status back to previous status
 
+    // Clear the previous status field after restoring
+    appointment.previousStatus = undefined;
+
     // Save the changes
     await appointment.save();
 
