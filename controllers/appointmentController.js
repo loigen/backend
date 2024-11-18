@@ -896,7 +896,10 @@ exports.completeAppointment = async (req, res) => {
       return res.status(404).json({ message: "Appointment not found." });
     }
 
-    if (appointment.status !== "accepted") {
+    if (
+      appointment.status !== "accepted" &&
+      appointment.status !== "rescheduled"
+    ) {
       return res.status(400).json({
         message: "Only accepted appointments can be marked as completed.",
       });
