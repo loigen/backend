@@ -96,6 +96,10 @@ exports.updateAppointmentStatusToRescheduled = async (req, res) => {
     // Update the appointment status to 'rescheduled'
     appointment.status = "rescheduled";
 
+    // Clear the previous status and requestedTime after updating
+    appointment.previousStatus = undefined;
+    appointment.requestedTime = undefined;
+
     // Save the changes
     await appointment.save();
 
@@ -109,6 +113,7 @@ exports.updateAppointmentStatusToRescheduled = async (req, res) => {
     res.status(500).json({ message: "Failed to update appointment status." });
   }
 };
+
 exports.disapproveRequest = async (req, res) => {
   try {
     const { id } = req.params;
