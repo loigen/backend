@@ -61,7 +61,13 @@ const sendEmailOTP = async (to, otp, lastname) => {
   });
 };
 
-const sendAppointmentReminder = async (to, firstname, date, time) => {
+const sendAppointmentReminder = async (
+  to,
+  firstname,
+  date,
+  time,
+  reminderDetails
+) => {
   const response = await getRefreshToken(
     REFRESH_TOKEN,
     CLIENT_ID,
@@ -87,14 +93,25 @@ const sendAppointmentReminder = async (to, firstname, date, time) => {
   const from = MY_EMAIL;
   const subject = "Appointment Reminder Notification";
   const html = `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f4f4; border-radius: 5px;">
-          <h2 style="color: #333;">Hello ${firstname},</h2>
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f4f4; border-radius: 5px; max-width: 600px; margin: 0 auto;">
+        <div style="text-align: center; padding: 15px 0; background-color: #68B2A0; color: #ffffff; border-radius: 5px 5px 0 0;">
+          <h2 style="margin: 0; text-transform: capitalize;">SafePlace Appointment Reminder</h2>
+        </div>
+        <div style="padding: 20px; background-color: #ffffff; border-radius: 0 0 5px 5px;">
+          <h3 style="color: #333333; text-transform: capitalize;">Dear ${firstname},</h3>
           <p>This is a reminder regarding your upcoming appointment scheduled for:</p>
-          <p style="font-weight: bold;">Date: <strong>${date}</strong><br>Time: <strong>${time}</strong></p>
+          <h3 style="background-color: #e7f3fe; padding: 15px; border: 1px solid #b3d4fc; color: #31708f; text-align: center; border-radius: 5px;">
+            <strong>Date: ${date}</strong><br><strong>Time: ${time}</strong>
+          </h3>
+          <p style="margin-top: 10px;">${reminderDetails}</p>
           <p>We look forward to seeing you.</p>
           <p>Thank you.</p>
+          <p style="color: #666666;">You received this message because this email address is listed as an admin in the SafePlace system.</p>
+          <p>Sincerely yours,</p>
+          <p style="font-weight: bold;">safeplacewithdr.jeb</p>
+        </div>
       </div>
-      `;
+  `;
 
   return new Promise((resolve, reject) => {
     transport.sendMail({ from, subject, to, html }, (err, info) => {

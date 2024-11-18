@@ -113,7 +113,7 @@ exports.updateAppointmentStatusToRescheduled = async (req, res) => {
     res.status(500).json({ message: "Failed to update appointment status." });
   }
 };
-  
+
 exports.disapproveRequest = async (req, res) => {
   try {
     const { id } = req.params;
@@ -1013,7 +1013,16 @@ exports.handleRemind = async (req, res) => {
     }
 
     // Destructure necessary details from the appointment
-    const { email, firstname, date, time, status } = appointment;
+    const {
+      email,
+      firstname,
+      date,
+      time,
+      status,
+      consultationMethod,
+      meetLink,
+      meetPlace,
+    } = appointment;
 
     // Check if the appointment is in an acceptable status for reminders
     if (status !== "accepted") {
@@ -1025,8 +1034,22 @@ exports.handleRemind = async (req, res) => {
     // Format date for email
     const formattedDate = moment(date).format("YYYY-MM-DD");
 
+    // Prepare message for the reminder based on consultation method
+    let reminderDetails = "";
+    if (consultationMethod === "online") {
+      reminderDetails = `Please join your online consultation using the link: ${meetLink}`;
+    } else if (consultationMethod === "face-to-face") {
+      reminderDetails = `Your appointment will be held at: ${meetPlace}`;
+    }
+
     // Send the reminder email
-    await sendAppointmentReminder(email, firstname, formattedDate, time);
+    await sendAppointmentReminder(
+      email,
+      firstname,
+      formattedDate,
+      time,
+      reminderDetails
+    );
 
     res.status(200).json({
       message: "Reminder email sent successfully",

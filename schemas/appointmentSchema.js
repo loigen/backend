@@ -41,7 +41,7 @@ const appointmentSchema = new Schema(
     },
     previousStatus: {
       type: String,
-      required: false, // Optional field, stores the status before it was changed to ReqRescheduled
+      required: false,
     },
     userId: {
       type: Schema.Types.ObjectId,
@@ -70,15 +70,15 @@ const appointmentSchema = new Schema(
     },
     avatar: {
       type: String,
-      required: false, // Optional field
+      required: false,
     },
     meetLink: {
       type: String,
-      required: false, // Optional field
+      required: false,
     },
     meetPlace: {
       type: String,
-      required: false, // Optional field
+      required: false,
     },
     sex: {
       type: String,
@@ -86,11 +86,11 @@ const appointmentSchema = new Schema(
     },
     refundReceipt: {
       type: String,
-      required: false, // Optional field
+      required: false,
     },
     qrCode: {
       type: String,
-      required: false, // Optional field
+      required: false,
     },
     note: {
       type: String,
@@ -98,19 +98,19 @@ const appointmentSchema = new Schema(
     },
     primaryComplaint: {
       type: String,
-      required: false, // Optional field
+      required: false,
     },
     historyOfIntervention: {
       type: String,
-      required: false, // Optional field
+      required: false,
     },
     briefDetails: {
       type: String,
-      required: false, // Optional field
+      required: false,
     },
     consultationMethod: {
       type: String,
-      required: false, // Optional field
+      required: false,
     },
   },
   {
