@@ -58,15 +58,20 @@ exports.reqRescheduleAppointment = async (req, res) => {
       return res.status(404).json({ message: "Appointment not found." });
     }
 
+    // Store the current status in previousStatus before updating to ReqRescheduled
+    appointment.previousStatus = appointment.status;
+
+    // Update the appointment with the new date and requested time
     appointment.date = newDate;
-    appointment.time = newTime;
+    appointment.requestedTime = newTime; // Updated to use requestedTime
     appointment.status = "ReqRescheduled";
 
     await appointment.save();
 
-    res
-      .status(200)
-      .json({ message: "Appointment rescheduled successfully", appointment });
+    res.status(200).json({
+      message: "Appointment rescheduled successfully",
+      appointment,
+    });
   } catch (error) {
     console.error("Error rescheduling appointment:", error);
     res.status(500).json({ message: "Failed to reschedule appointment." });
@@ -83,6 +88,11 @@ exports.updateAppointmentStatusToRescheduled = async (req, res) => {
       return res.status(404).json({ message: "Appointment not found." });
     }
 
+    // If the appointment status is 'ReqRescheduled' and 'requestedTime' is provided, update the time
+    if (appointment.status === "ReqRescheduled" && appointment.requestedTime) {
+      appointment.time = appointment.requestedTime; // Update the time with requestedTime
+    }
+
     // Update the appointment status to 'rescheduled'
     appointment.status = "rescheduled";
 
@@ -90,12 +100,54 @@ exports.updateAppointmentStatusToRescheduled = async (req, res) => {
     await appointment.save();
 
     res.status(200).json({
-      message: "Appointment status updated to rescheduled",
+      message:
+        "Appointment status updated to rescheduled, and time set to requested time",
       appointment,
     });
   } catch (error) {
     console.error("Error updating appointment status:", error);
     res.status(500).json({ message: "Failed to update appointment status." });
+  }
+};
+exports.disapproveRequest = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the appointment by ID
+    const appointment = await Appointment.findById(id);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found." });
+    }
+
+    // Ensure the appointment's status is 'ReqRescheduled'
+    if (appointment.status !== "ReqRescheduled") {
+      return res.status(400).json({
+        message: "The appointment is not in a rescheduled request state.",
+      });
+    }
+
+    // Save the previous status before updating
+    const previousStatus =
+      appointment.status === "ReqRescheduled"
+        ? appointment.previousStatus
+        : appointment.status;
+
+    // Clear the requestedTime and restore the previous status
+    appointment.requestedTime = undefined; // Clear the requested time
+    appointment.status = previousStatus; // Set status back to previous status
+
+    // Save the changes
+    await appointment.save();
+
+    res.status(200).json({
+      message: "Reschedule request disapproved, status restored",
+      appointment,
+    });
+  } catch (error) {
+    console.error("Error disapproving request:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to disapprove the reschedule request." });
   }
 };
 

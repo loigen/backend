@@ -94,4 +94,6 @@ router.put("/:appointmentId/note", appointmentController.addNoteToAppointment);
 router.post("/remind/:appointmentId", appointmentController.handleRemind);
 router.patch("/edit-note/:id", appointmentController.editNote);
 
+router.put("/:id/disapprove", appointmentController.disapproveRequest);
+
 module.exports = router;

@@ -15,6 +15,10 @@ const appointmentSchema = new Schema(
       type: String,
       required: true,
     },
+    requestedTime: {
+      type: String,
+      required: false,
+    },
     appointmentType: {
       type: String,
       required: true,
@@ -34,6 +38,10 @@ const appointmentSchema = new Schema(
       ],
       default: "pending",
       required: true,
+    },
+    previousStatus: {
+      type: String,
+      required: false, // Optional field, stores the status before it was changed to ReqRescheduled
     },
     userId: {
       type: Schema.Types.ObjectId,
