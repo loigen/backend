@@ -169,8 +169,9 @@ exports.countFreeSlots = async (req, res) => {
 
 exports.countWeeklySlots = async (req, res) => {
   try {
-    const startOfWeek = moment().startOf("week").toDate();
-    const endOfWeek = moment().endOf("week").toDate();
+    // Set the start and end of the week (Monday to Sunday)
+    const startOfWeek = moment().startOf("isoWeek").toDate(); // Start of the week (Monday)
+    const endOfWeek = moment().endOf("isoWeek").toDate(); // End of the week (Sunday)
 
     const weeklySlotsCount = await Schedule.countDocuments({
       date: { $gte: startOfWeek, $lte: endOfWeek },

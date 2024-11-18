@@ -113,7 +113,7 @@ exports.updateAppointmentStatusToRescheduled = async (req, res) => {
     res.status(500).json({ message: "Failed to update appointment status." });
   }
 };
-
+  
 exports.disapproveRequest = async (req, res) => {
   try {
     const { id } = req.params;
