@@ -103,7 +103,7 @@ const sendAppointmentReminder = async (
           <h3 style="background-color: #e7f3fe; padding: 15px; border: 1px solid #b3d4fc; color: #31708f; text-align: center; border-radius: 5px;">
             <strong>Date: ${date}</strong><br><strong>Time: ${time}</strong>
           </h3>
-          <p style="margin-top: 10px;">${reminderDetails}</p>
+          <b style="margin-top: 10px;">${reminderDetails}</b>
           <p>We look forward to seeing you.</p>
           <p>Thank you.</p>
           <p style="color: #666666;">You received this message because this email address is listed as an admin in the SafePlace system.</p>
