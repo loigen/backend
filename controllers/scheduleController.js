@@ -152,8 +152,8 @@ exports.acceptSlot = async (req, res) => {
 
 exports.countFreeSlots = async (req, res) => {
   try {
-    const startOfWeek = moment().startOf("week").toDate();
-    const endOfWeek = moment().endOf("week").toDate();
+    const startOfWeek = moment().startOf("isoWeek").toDate();
+    const endOfWeek = moment().endOf("isoWeek").toDate();
 
     const freeSlotsCount = await Schedule.countDocuments({
       status: "free",
