@@ -19,6 +19,10 @@ const appointmentSchema = new Schema(
       type: String,
       required: false,
     },
+    requestedDate: {
+      type: String,
+      required: false,
+    },
     appointmentType: {
       type: String,
       required: true,

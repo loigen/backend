@@ -62,7 +62,7 @@ exports.reqRescheduleAppointment = async (req, res) => {
     appointment.previousStatus = appointment.status;
 
     // Update the appointment with the new date and requested time
-    appointment.date = newDate;
+    appointment.requestedDate = newDate;
     appointment.requestedTime = newTime; // Updated to use requestedTime
     appointment.status = "ReqRescheduled";
 
@@ -89,8 +89,14 @@ exports.updateAppointmentStatusToRescheduled = async (req, res) => {
     }
 
     // If the appointment status is 'ReqRescheduled' and 'requestedTime' is provided, update the time
-    if (appointment.status === "ReqRescheduled" && appointment.requestedTime) {
-      appointment.time = appointment.requestedTime; // Update the time with requestedTime
+    if (
+      appointment.status === "ReqRescheduled" &&
+      appointment.requestedTime &&
+      appointment.requestedDate
+    ) {
+      appointment.time = appointment.requestedTime;
+      appointment.date = appointment.requestedDate; // Update the time with requestedTime
+      // Update the time with requestedTime
     }
 
     // Update the appointment status to 'rescheduled'
@@ -99,6 +105,7 @@ exports.updateAppointmentStatusToRescheduled = async (req, res) => {
     // Clear the previous status and requestedTime after updating
     appointment.previousStatus = undefined;
     appointment.requestedTime = undefined;
+    appointment.requestedDate = undefined;
 
     // Save the changes
     await appointment.save();
