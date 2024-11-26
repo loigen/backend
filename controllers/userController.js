@@ -264,7 +264,6 @@ exports.addAdminUser = async (req, res) => {
       sex,
       password,
       birthdate,
-      bio,
     } = req.body;
 
     // Check if the user already exists
@@ -291,7 +290,6 @@ exports.addAdminUser = async (req, res) => {
       password: hashedPassword,
       role: "admin",
       birthdate,
-      bio,
     });
 
     await newUser.save();
