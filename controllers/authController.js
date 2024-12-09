@@ -350,7 +350,7 @@ exports.updatePassword = async (req, res) => {
         <html>
           <body>
             <h1>User not found</h1>
-            <a href="https://frontend-loigens-projects.vercel.app">Return to homepage</a>
+            <a href="https://safeplace-system.vercel.app/">Return to homepage</a>
           </body>
         </html>
       `);
@@ -369,7 +369,7 @@ exports.updatePassword = async (req, res) => {
       <html>
         <body>
           <h1>Password Updated Successfully</h1>
-          <a href="https://frontend-loigens-projects.vercel.app">Login Here</a>
+          <a href="https://safeplace-system.vercel.app/">Login Here</a>
         </body>
       </html>
     `);
@@ -378,7 +378,7 @@ exports.updatePassword = async (req, res) => {
       <html>
         <body>
           <h1>Something went wrong</h1>
-          <a href="https://frontend-loigens-projects.vercel.app">Return to homepage</a>
+          <a href="https://safeplace-system.vercel.app/">Return to homepage</a>
         </body>
       </html>
     `);
